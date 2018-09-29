@@ -679,14 +679,14 @@
               <FilePath>.\opensrc\emWin\Config\GUIConf.c</FilePath>
             </File>
             <File>
-              <FileName>GUI_X.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\opensrc\emWin\OS\GUI_X.c</FilePath>
-            </File>
-            <File>
               <FileName>GUI_X_OS.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\opensrc\emWin\OS\GUI_X_OS.c</FilePath>
+            </File>
+            <File>
+              <FileName>LCDConf_FlexColor_Template.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Config\LCDConf_FlexColor_Template.c</FilePath>
             </File>
           </Files>
         </Group>
