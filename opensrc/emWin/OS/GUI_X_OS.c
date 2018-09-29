@@ -55,15 +55,17 @@ Purpose     : This file provides emWin Interface with FreeRTOS
 
 #include "GUI.h"
     
-    /* FreeRTOS include files */
-#include "cmsis_os.h"
-    
+/* FreeRTOS include files */
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
+
 /*********************************************************************
 *
 * Global data
 */
-static osMutexId osMutex;
-static osSemaphoreId osSemaphore;
+static SemaphoreHandle_t osMutex;
+static SemaphoreHandle_t osSemaphore;
 /*********************************************************************
 *
 * Timing:
@@ -107,7 +109,11 @@ void GUI_X_Init(void) {
 * Called if WM is in idle state
 */
 
-void GUI_X_ExecIdle(void) {}
+void GUI_X_ExecIdle(void) 
+{
+	GUI_X_Delay(1);
+	return;
+}
 
 /*********************************************************************
 *
@@ -130,45 +136,45 @@ void GUI_X_ExecIdle(void) {}
 /* Init OS */
 void GUI_X_InitOS(void)
 { 
-  /* Create Mutex lock */
-  osMutexDef(MUTEX);
+  	/* Create Mutex lock */
+ 	osMutex = xSemaphoreCreateMutex(); 
   
-  /* Create the Mutex used by the two threads */
-  osMutex = osMutexCreate(osMutex(MUTEX));
-  
-  /* Create Semaphore lock */
-  osSemaphoreDef(SEM);
-  
-  /* Create the Semaphore used by the two threads */
-  osSemaphore= osSemaphoreCreate(osSemaphore(SEM), 1);  
+  	/* Create Semaphore lock */
+	vSemaphoreCreateBinary(osSemaphore);
+
+	return;
 }
 
 void GUI_X_Unlock(void)
 { 
-  osMutexRelease(osMutex);
+	xSemaphoreGive(osMutex);
+	return;
 }
 
 void GUI_X_Lock(void)
 {
-  osMutexWait(osMutex , osWaitForever) ;
+	xSemaphoreTake(osMutex, portMAX_DELAY);
+	return;
 }
 
 /* Get Task handle */
 U32 GUI_X_GetTaskId(void) 
 { 
-  return ((U32) osThreadGetId());
+	return (U32)xTaskGetCurrentTaskHandle();
 }
 
 
 void GUI_X_WaitEvent (void) 
 {
-  osSemaphoreWait(osSemaphore , osWaitForever) ;
+  	xSemaphoreTake(osSemaphore , portMAX_DELAY) ;
+	return;
 }
 
 
 void GUI_X_SignalEvent (void) 
 {
-  osMutexRelease(osSemaphore);
+	xSemaphoreGive(osSemaphore);
+	return;
 }
 
 /*********************************************************************
@@ -185,8 +191,8 @@ functions automatically)
 
 */
 
-void GUI_X_Log (const char *s) { }
-void GUI_X_Warn (const char *s) { }
-void GUI_X_ErrorOut(const char *s) { }
+void GUI_X_Log (const char *s) { GUI_USE_PARA(s); }
+void GUI_X_Warn (const char *s) { GUI_USE_PARA(s); }
+void GUI_X_ErrorOut(const char *s) { GUI_USE_PARA(s); }
 
 /*************************** End of file ****************************/
