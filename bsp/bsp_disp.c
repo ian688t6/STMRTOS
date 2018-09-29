@@ -232,7 +232,7 @@ uint16_t bsp_disp_id(void)
 	return us_id;
 }
 
-void bsp_disp_drawpoint(uint16_t us_x, uint16_t us_y, uint16_t us_color)
+void bsp_disp_draw_point(uint16_t us_x, uint16_t us_y, uint16_t us_color)
 {
 	lcd_panel_t *pst_lcd = gpst_drv;
 
