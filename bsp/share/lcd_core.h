@@ -19,9 +19,15 @@ typedef struct lcd_cmdinfo
 typedef struct lcd_gram
 {
 	uint16_t		us_gram;
-	uint16_t		us_gram_x;
-	uint16_t		us_gram_y;
+//	uint16_t		us_gram_x;
+//	uint16_t		us_gram_y;
 } lcd_gram_t;
+
+typedef struct lcd_pos
+{
+	lcd_cmd_t 	*pst_x;
+	lcd_cmd_t 	*pst_y;
+}  lcd_pos_t;
 
 typedef struct
 {
@@ -32,7 +38,8 @@ typedef struct
 	uint16_t		us_framerate;
 	uint32_t		ui_xres;
 	uint32_t		ui_yres;
-	lcd_cmdinfo_t	st_cmdinfo;
+	lcd_cmdinfo_t	st_cmd_init;
+	lcd_pos_t		st_cmd_setpos;
 } lcd_panel_t;
 
 #define CMD_ARRAY_SIZE(array) (sizeof(array) / sizeof((array)[0]))

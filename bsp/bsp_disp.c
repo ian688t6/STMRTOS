@@ -18,6 +18,8 @@
 #define DATAOUT(x) GPIOB->ODR=x; //数据输出
 #define DATAIN     GPIOB->IDR;   //数据输入	
 
+static lcd_panel_t *gpst_drv;
+
 static void disp_reg(uint16_t us_reg)
 {
 	LCD_RS_CLR;
@@ -71,6 +73,51 @@ static void disp_tx(lcd_cmd_t *pst_cmd)
 			continue;
 		}
 		disp_wdata(pst_cmd->puc_payload[i]);
+	}
+	
+	return;
+}
+
+static void disp_setpos(uint16_t us_x, uint16_t us_y)
+{
+	lcd_panel_t *pst_lcd = gpst_drv;	
+	
+	switch (pst_lcd->st_cmd_setpos.pst_x->ui_size)
+	{
+		case 1:
+		disp_reg(pst_lcd->st_cmd_setpos.pst_x->puc_payload[0]);
+		disp_wdata(us_x >> 8);
+		disp_wdata(us_x & 0xff);
+		break;
+		
+		case 2:
+		disp_reg(pst_lcd->st_cmd_setpos.pst_x->puc_payload[0]);
+		disp_wdata(us_x >> 8);
+		disp_reg(pst_lcd->st_cmd_setpos.pst_x->puc_payload[1]);
+		disp_wdata(us_x & 0xff);	
+		break;
+		
+		default:
+		break;
+	}
+	
+	switch (pst_lcd->st_cmd_setpos.pst_y->ui_size)
+	{
+		case 1:
+		disp_reg(pst_lcd->st_cmd_setpos.pst_y->puc_payload[0]);
+		disp_wdata(us_y >> 8);
+		disp_wdata(us_y & 0xff);			
+		break;
+		
+		case 2:
+		disp_reg(pst_lcd->st_cmd_setpos.pst_y->puc_payload[0]);
+		disp_wdata(us_y >> 8);
+		disp_reg(pst_lcd->st_cmd_setpos.pst_y->puc_payload[1]);
+		disp_wdata(us_y & 0xff);				
+		break;
+		
+		default:
+		break;
 	}
 	
 	return;
@@ -168,15 +215,12 @@ static void disp_test(void)
 			}	
 		}
 	}
-	
-
 }
 
 uint16_t bsp_disp_id(void)
 {
 	uint16_t us_id;
-	board_t *pst_bd = board_get();
-	lcd_panel_t *pst_lcd = pst_bd->pf_lcd_panel_get();
+	lcd_panel_t *pst_lcd = gpst_drv;
 	
 	disp_reg(pst_lcd->us_id_addr);
 	disp_rdata();
@@ -188,12 +232,22 @@ uint16_t bsp_disp_id(void)
 	return us_id;
 }
 
+void bsp_disp_drawpoint(uint16_t us_x, uint16_t us_y, uint16_t us_color)
+{
+	lcd_panel_t *pst_lcd = gpst_drv;
+
+	disp_setpos(us_x, us_y);
+	disp_reg(pst_lcd->st_gram.us_gram);
+	disp_wdata(us_color);
+	
+	return;
+}
+
 void bsp_disp_clear(uint16_t us_color)
 {
 	int32_t x = 0;
 	int32_t y = 0;
-	board_t *pst_bd = board_get();
-	lcd_panel_t *pst_lcd = pst_bd->pf_lcd_panel_get();
+	lcd_panel_t *pst_lcd = gpst_drv;
 	
 	disp_reg(pst_lcd->st_gram.us_gram);
 	
@@ -211,6 +265,7 @@ void bsp_disp_init(void)
 	GPIO_InitTypeDef st_gpio_inidef;
 	board_t *pst_bd = board_get();
 	lcd_panel_t *pst_lcd = pst_bd->pf_lcd_panel_get();
+	gpst_drv = pst_lcd;
 	
  	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC|RCC_APB2Periph_GPIOB|RCC_APB2Periph_AFIO, ENABLE);
 	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable , ENABLE);
@@ -228,8 +283,9 @@ void bsp_disp_init(void)
 	/* Todo: delay 50ms */
 	rtos_mdelay(50);
 	
-	disp_tx_cmds(pst_lcd->st_cmdinfo.past_cmds, pst_lcd->st_cmdinfo.ui_cmd_count);
+	disp_tx_cmds(pst_lcd->st_cmd_init.past_cmds, pst_lcd->st_cmd_init.ui_cmd_count);
 //	bsp_disp_clear(0x07E0);
 	disp_test();
+	
 	return;
 }
