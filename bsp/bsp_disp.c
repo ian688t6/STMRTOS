@@ -243,6 +243,44 @@ void bsp_disp_draw_point(uint16_t us_x, uint16_t us_y, uint16_t us_color)
 	return;
 }
 
+void bsp_disp_draw_line(uint16_t us_x1, uint16_t us_y1, uint16_t us_x2, uint16_t us_y2)
+{
+	uint16_t t;
+	int32_t i_distance 	= 0;
+	int32_t i_row 		= us_x1;
+	int32_t i_col 		= us_y1; 
+	int32_t i_xerr = 0, i_yerr = 0;
+	int32_t i_incx = 0, i_incy = 0;
+	int32_t i_delta_x = us_x2 - us_x1;
+	int32_t i_delta_y = us_y2 - us_y1;
+	
+	i_delta_x = i_delta_x >= 0 ? i_delta_x : -i_delta_x;
+	i_delta_y = i_delta_y >= 0 ? i_delta_y : -i_delta_y;
+	i_incx = i_delta_x == 0 ? 0 : i_delta_x / (us_x2 - us_x1);
+	i_incy = i_delta_y == 0 ? 0 : i_delta_y / (us_y2 - us_y1);
+	i_distance = i_delta_x > i_delta_y ? i_delta_x : i_delta_y;
+
+	for (t = 0; t <= i_distance+1; t ++)
+	{  
+		bsp_disp_draw_point(i_row, i_col, 0x0000);
+		i_xerr += i_delta_x ; 
+		i_yerr += i_delta_y ; 
+		if(i_xerr > i_distance) 
+		{ 
+			i_xerr -= i_distance; 
+			i_row += i_incx; 
+		}
+		
+		if(i_yerr > i_distance) 
+		{ 
+			i_yerr -= i_distance; 
+			i_col += i_incy; 
+		} 
+	}
+	
+	return;
+}
+
 void bsp_disp_clear(uint16_t us_color)
 {
 	int32_t x = 0;
