@@ -688,6 +688,11 @@
               <FileType>1</FileType>
               <FilePath>.\opensrc\emWin\Config\LCDConf_FlexColor_Template.c</FilePath>
             </File>
+            <File>
+              <FileName>GUIDRV_Template.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Config\GUIDRV_Template.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
