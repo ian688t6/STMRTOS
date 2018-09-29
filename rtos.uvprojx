@@ -365,7 +365,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_HD,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>.\core;.\system;.\stm32_fwlib\inc;.\os\include;.\os\portable\RVDS\ARM_CM3;.\bsp;.\bsp\board;.\bsp\share</IncludePath>
+              <IncludePath>.\core;.\system;.\stm32_fwlib\inc;.\os\include;.\os\portable\RVDS\ARM_CM3;.\bsp;.\bsp\board;.\bsp\share;.\opensrc\emWin\inc;.\opensrc\emWin\Config</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -657,6 +657,36 @@
               <FileName>lcd_tft9341.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\bsp\board\lcd_tft9341.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>libs</GroupName>
+          <Files>
+            <File>
+              <FileName>STemWin532_CM3_OS_Keil.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>.\opensrc\emWin\Lib\STemWin532_CM3_OS_Keil.lib</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>emwin</GroupName>
+          <Files>
+            <File>
+              <FileName>GUIConf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Config\GUIConf.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_X.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\OS\GUI_X.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUI_X_OS.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\OS\GUI_X_OS.c</FilePath>
             </File>
           </Files>
         </Group>
