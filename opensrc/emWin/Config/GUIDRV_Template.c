@@ -231,6 +231,8 @@ static void _XorPixel(GUI_DEVICE * pDevice, int x, int y) {
 */
 static void _FillRect(GUI_DEVICE * pDevice, int x0, int y0, int x1, int y1) {
 	/* Todo: bsp_disp_fill */
+	printf("fillRect: x0=%d y0=%d x1=%d y1=%d\r\n", 
+					x0, y0, x1, y1);
 	bsp_disp->fill_color(x0, y0, x1, y1, LCD_COLORINDEX);
 	
 #if 0
@@ -846,6 +848,7 @@ const GUI_DEVICE_API GUIDRV_Template_API = {
 
 void GUIDRV_FlexColor_SetDisp(void *pv_arg)
 {
+	printf("GUIDRV_FlexColor_SetDisp\r\n");
 	bsp_disp = (bsp_disp_t *)pv_arg;
 	return;
 }

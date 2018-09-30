@@ -3,6 +3,7 @@
 #include "FreeRTOS.h"
 #include "bsp.h"
 #include "task.h"
+#include "GUI.h"
 
 #define START_TASK_PRIO		(1)
 #define START_STK_SIZE		(128)
@@ -13,9 +14,13 @@
 #define LED1_TASK_PRIO		(3)
 #define LED1_STK_SIZE		(50)
 
+#define GUI_TASK_PRIO		(4)
+#define GUI_STK_SIZE		(50)
+
 TaskHandle_t StartTask_Handler;
 TaskHandle_t LED0Task_Handler;
 TaskHandle_t LED1Task_Handler;
+TaskHandle_t GUITask_Handler;
 
 static void led_init(void)
 {
@@ -59,6 +64,20 @@ static void led1_task(void *pvParameters)
 	}
 }
 
+static void gui_task(void *pv_param)
+{
+	printf("gui_task ...\r\n");
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, ENABLE);
+	GUI_Init();
+	GUI_SetBkColor(GUI_BLUE);
+	GUI_Clear();
+	printf("gui_task 1...\r\n");
+	for (;;)
+	{
+		rtos_mdelay(500);
+	}
+}
+
 static void start_task(void *pvParameters)
 {
 	taskENTER_CRITICAL();
@@ -75,6 +94,14 @@ static void start_task(void *pvParameters)
 				(void *)NULL,
 				(UBaseType_t)LED1_TASK_PRIO,
 				(TaskHandle_t *)&LED1Task_Handler);
+#if 1
+	xTaskCreate((TaskFunction_t)gui_task,
+				(const char *)"gui_task",
+				(uint16_t)GUI_STK_SIZE,
+				(void *)NULL,
+				(UBaseType_t)GUI_TASK_PRIO,
+				(TaskHandle_t *)&GUITask_Handler);
+#endif	
 	vTaskDelete(StartTask_Handler);
 	taskEXIT_CRITICAL();
 }

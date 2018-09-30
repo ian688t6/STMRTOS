@@ -198,7 +198,7 @@ static void disp_fill_color(uint16_t us_x1, uint16_t us_y1, uint16_t us_x2, uint
 	return;
 }
 
-static void disp_test(void)
+void bsp_disp_test(void)
 {
 	int32_t x = 0;
 	int32_t y = 0;
@@ -409,8 +409,6 @@ void bsp_disp_init(void)
 	rtos_mdelay(50);
 	
 	disp_tx_cmds(pst_lcd->st_cmd_init.past_cmds, pst_lcd->st_cmd_init.ui_cmd_count);
-//	bsp_disp_clear(0x07E0);
-	disp_test();
 	
 	return;
 }

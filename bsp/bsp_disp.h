@@ -27,4 +27,6 @@ extern void bsp_disp_draw_rect(uint16_t us_x1, uint16_t us_y1, uint16_t us_x2, u
 
 extern uint16_t bsp_disp_id(void);
 
+extern void bsp_disp_test(void);
+
 #endif

@@ -50,9 +50,9 @@ Purpose     : Display controller initialization
   *
   ******************************************************************************
   */
-
+#include "basic.h"
 #include "GUI.h"
-
+#include "FreeRTOS.h"
 /*********************************************************************
 *
 *       Defines
@@ -62,8 +62,8 @@ Purpose     : Display controller initialization
 //
 // Define the available number of bytes available for the GUI
 //
-#define GUI_NUMBYTES  0x200000
-
+#define GUI_NUMBYTES  	(10 * 1024)
+#define GUI_BLOCKSIZE	(0x80)
 /*********************************************************************
 *
 *       Public code
@@ -82,15 +82,24 @@ void GUI_X_Config(void) {
   //
   // 32 bit aligned memory area
   //
-  static U32 aMemory[GUI_NUMBYTES / 4];
-  //
+//  static U32 aMemory[GUI_NUMBYTES / 4];
+	printf("GUI_X_Config ...\r\n");
+ 	U8 *puc_mem = pvPortMalloc(GUI_NUMBYTES);
+	if (NULL == puc_mem)
+	{
+		return;
+	}
+//
   // Assign memory to emWin
   //
-  GUI_ALLOC_AssignMemory(aMemory, GUI_NUMBYTES);
-  //
+	GUI_ALLOC_AssignMemory(puc_mem, GUI_NUMBYTES);
+	GUI_ALLOC_SetAvBlockSize(GUI_BLOCKSIZE);  
+//
   // Set default font
   //
-  GUI_SetDefaultFont(GUI_FONT_6X8);
+  	GUI_SetDefaultFont(GUI_FONT_6X8);
+
+  	return;
 }
 
 /*************************** End of file ****************************/
