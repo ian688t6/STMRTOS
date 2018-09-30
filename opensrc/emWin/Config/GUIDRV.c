@@ -163,7 +163,6 @@ static void _SetPixelIndex(GUI_DEVICE * pDevice, int x, int y, int PixelIndex) {
 	//
       // Write into hardware ... Adapt to your system
       // bsp_disp_set_pixel
-		printf("setPixel x=%d y=%d %#x\r\n", x, y, PixelIndex);
 		bsp_disp->set_pixel(x, y, PixelIndex);
       // TBD by customer...
       //
@@ -205,7 +204,6 @@ static unsigned int _GetPixelIndex(GUI_DEVICE * pDevice, int x, int y) {
       // Write into hardware ... Adapt to your system
 		PixelIndex = bsp_disp->get_pixel(x, y);
 		// TBD by customer...
-		printf("getPixel x=%d y=%d %#x\r\n", x, y, PixelIndex);
       //
     }
     #if (LCD_MIRROR_X == 0) && (LCD_MIRROR_Y == 0) && (LCD_SWAP_XY == 0)
@@ -234,8 +232,6 @@ static void _XorPixel(GUI_DEVICE * pDevice, int x, int y) {
 */
 static void _FillRect(GUI_DEVICE * pDevice, int x0, int y0, int x1, int y1) {
 	/* Todo: bsp_disp_fill */
-	printf("fillRect: x0=%d y0=%d x1=%d y1=%d\r\n", 
-					x0, y0, x1, y1);
 	bsp_disp->fill_color(x0, y0, x1, y1, LCD_COLORINDEX);
 	
 #if 0

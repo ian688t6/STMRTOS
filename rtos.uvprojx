@@ -684,14 +684,14 @@
               <FilePath>.\opensrc\emWin\OS\GUI_X_OS.c</FilePath>
             </File>
             <File>
-              <FileName>LCDConf_FlexColor_Template.c</FileName>
+              <FileName>GUIDRV.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\opensrc\emWin\Config\LCDConf_FlexColor_Template.c</FilePath>
+              <FilePath>.\opensrc\emWin\Config\GUIDRV.c</FilePath>
             </File>
             <File>
-              <FileName>GUIDRV_Template.c</FileName>
+              <FileName>LCDConf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\opensrc\emWin\Config\GUIDRV_Template.c</FilePath>
+              <FilePath>.\opensrc\emWin\Config\LCDConf.c</FilePath>
             </File>
           </Files>
         </Group>

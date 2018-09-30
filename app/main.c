@@ -70,7 +70,10 @@ static void gui_task(void *pv_param)
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, ENABLE);
 	GUI_Init();
 	GUI_SetBkColor(GUI_BLUE);
+	GUI_SetColor(GUI_YELLOW);
 	GUI_Clear();
+	GUI_SetFont(&GUI_Font24_ASCII);
+	GUI_DispStringAt("Hello World!", 0, 0);
 	printf("gui_task 1...\r\n");
 	for (;;)
 	{
