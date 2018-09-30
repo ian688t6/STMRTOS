@@ -53,7 +53,6 @@ Purpose     : Display controller configuration (single layer)
 
 #include "GUI.h"
 #include "GUIDRV_FlexColor.h"
-#include "GUIDRV_Template.h"
 #include "basic.h"
 #include "bsp_disp.h"
 /*********************************************************************
