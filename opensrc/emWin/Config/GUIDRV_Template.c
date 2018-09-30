@@ -159,9 +159,11 @@ static void _SetPixelIndex(GUI_DEVICE * pDevice, int x, int y, int PixelIndex) {
     GUI_USE_PARA(y);
     GUI_USE_PARA(PixelIndex);
     {
-      //
+
+	//
       // Write into hardware ... Adapt to your system
       // bsp_disp_set_pixel
+		printf("setPixel x=%d y=%d %#x\r\n", x, y, PixelIndex);
 		bsp_disp->set_pixel(x, y, PixelIndex);
       // TBD by customer...
       //
@@ -203,6 +205,7 @@ static unsigned int _GetPixelIndex(GUI_DEVICE * pDevice, int x, int y) {
       // Write into hardware ... Adapt to your system
 		PixelIndex = bsp_disp->get_pixel(x, y);
 		// TBD by customer...
+		printf("getPixel x=%d y=%d %#x\r\n", x, y, PixelIndex);
       //
     }
     #if (LCD_MIRROR_X == 0) && (LCD_MIRROR_Y == 0) && (LCD_SWAP_XY == 0)
@@ -848,7 +851,6 @@ const GUI_DEVICE_API GUIDRV_Template_API = {
 
 void GUIDRV_FlexColor_SetDisp(void *pv_arg)
 {
-	printf("GUIDRV_FlexColor_SetDisp\r\n");
 	bsp_disp = (bsp_disp_t *)pv_arg;
 	return;
 }

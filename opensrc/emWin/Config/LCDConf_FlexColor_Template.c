@@ -173,14 +173,10 @@ void LCD_X_Config(void) {
   //
   // Set display driver and color conversion
   //
-  printf("LCD_X_Config 1...\r\n");
   bsp_disp_register(&gpst_disp);
-
-  GUI_DEVICE_CreateAndLink(GUIDRV_TEMPLATE, GUICC_565, 0, 0);
-  printf("LCD_X_Config 2...\r\n");
+  GUI_DEVICE_CreateAndLink(GUIDRV_TEMPLATE, GUICC_M565, 0, 0);
   GUIDRV_FlexColor_SetDisp(gpst_disp);
   //
-  printf("LCD_X_Config 3...\r\n");
   // Display driver configuration, required for Lin-driver
   //  
 	LCD_SetSizeEx    (0, gpst_disp->ui_xres, gpst_disp->ui_yres);
