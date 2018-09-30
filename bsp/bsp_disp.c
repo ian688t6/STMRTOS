@@ -146,19 +146,55 @@ static void disp_set_pixel(uint16_t us_x, uint16_t us_y, uint16_t us_color)
 
 static uint16_t disp_get_pixel(uint16_t us_x, uint16_t us_y)
 {
-	uint16_t us_color = 0;
+ 	u16 r,g,b;
 	lcd_panel_t *pst_lcd = gpst_drv;
 	
 	if ((us_x >= pst_lcd->ui_xres) || (us_y >= pst_lcd->ui_yres))
 		return 0;
 	
 	disp_setpos(us_x, us_y);
+	disp_reg(pst_lcd->st_gram.us_rgram);
 	
-	return us_color;
+	GPIOB->CRL=0X88888888;
+	GPIOB->CRH=0X88888888;
+	GPIOB->ODR=0XFFFF;
+
+	LCD_RS_SET;
+	LCD_CS_CLR;	    
+	//????(?GRAM?,??????)	
+	LCD_RD_CLR;	
+  	rtos_udelay(1);//??1us					   
+	LCD_RD_SET;
+ 	//dummy READ
+	LCD_RD_CLR;					   
+	rtos_udelay(1);//??1us					   
+ 	r=DATAIN;  	//??????
+	LCD_RD_SET;
+
+	LCD_RD_CLR;					   
+	b=DATAIN;//?????  	  
+	LCD_RD_SET;
+	g=r&0XFF;//??9341,???????RG??,R??,G??,??8?
+	g<<=8;
+
+	return (((r>>11)<<11)|((g>>10)<<5)|(b>>11));
 }
 
 static void disp_fill_color(uint16_t us_x1, uint16_t us_y1, uint16_t us_x2, uint16_t us_y2, uint16_t us_color)
 {
+	u16 i,j;
+	u16 xlen=0;
+	lcd_panel_t *pst_lcd = gpst_drv;
+	
+	xlen = us_x2 - us_x1 + 1;	 
+	for(i = us_y1; i <= us_y2; i++)
+	{
+		disp_setpos(us_x1,i);      				//?????? 
+		disp_reg(pst_lcd->st_gram.us_wgram);
+		for(j = 0; j < xlen; j ++)
+			disp_wdata(us_color);	//?????? 	    
+	}
+	
 	return;
 }
 
