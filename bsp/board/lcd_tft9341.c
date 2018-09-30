@@ -167,9 +167,8 @@ static lcd_panel_t gst_lcd_tft9341 =
 	.us_devid = 0x9341,
 	.us_id_addr	= 0xD3,
 	.st_gram = {
-		.us_gram = 0x2C,
-//		.us_gram_x = 0x2A,
-//		.us_gram_y = 0x2B,
+		.us_wgram = 0x2C,
+		.us_rgram = 0X2E,
 	},
 	.us_framerate = 60,
 	.ui_xres = 240,

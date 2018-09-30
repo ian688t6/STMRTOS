@@ -18,7 +18,8 @@ typedef struct lcd_cmdinfo
 
 typedef struct lcd_gram
 {
-	uint16_t		us_gram;
+	uint16_t		us_wgram;
+	uint16_t		us_rgram;
 //	uint16_t		us_gram_x;
 //	uint16_t		us_gram_y;
 } lcd_gram_t;

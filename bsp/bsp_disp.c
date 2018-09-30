@@ -19,6 +19,7 @@
 #define DATAIN     GPIOB->IDR;   //Êý¾ÝÊäÈë	
 
 static lcd_panel_t *gpst_drv;
+static bsp_disp_t gst_disp;
 
 static void disp_reg(uint16_t us_reg)
 {
@@ -137,6 +138,30 @@ static void disp_tx_cmds(lcd_cmd_t *pst_cmds, uint32_t ui_count)
 	return;
 }
 
+static void disp_set_pixel(uint16_t us_x, uint16_t us_y, uint16_t us_color)
+{
+	bsp_disp_draw_point(us_x, us_y, us_color);
+	return;
+}
+
+static uint16_t disp_get_pixel(uint16_t us_x, uint16_t us_y)
+{
+	uint16_t us_color = 0;
+	lcd_panel_t *pst_lcd = gpst_drv;
+	
+	if ((us_x >= pst_lcd->ui_xres) || (us_y >= pst_lcd->ui_yres))
+		return 0;
+	
+	disp_setpos(us_x, us_y);
+	
+	return us_color;
+}
+
+static void disp_fill_color(uint16_t us_x1, uint16_t us_y1, uint16_t us_x2, uint16_t us_y2, uint16_t us_color)
+{
+	return;
+}
+
 static void disp_test(void)
 {
 	int32_t x = 0;
@@ -144,7 +169,7 @@ static void disp_test(void)
 	int32_t k = 0;
 	board_t *pst_bd = board_get();
 	lcd_panel_t *pst_lcd = pst_bd->pf_lcd_panel_get();	
-	disp_reg(pst_lcd->st_gram.us_gram);
+	disp_reg(pst_lcd->st_gram.us_wgram);
 	for (y = 0; y < pst_lcd->ui_yres; y += 16, k ++) {
 		for (x = y * pst_lcd->ui_xres; x < y * pst_lcd->ui_xres + pst_lcd->ui_xres * 16; x ++) {
 			switch (k % 16)
@@ -237,7 +262,7 @@ void bsp_disp_draw_point(uint16_t us_x, uint16_t us_y, uint16_t us_color)
 	lcd_panel_t *pst_lcd = gpst_drv;
 
 	disp_setpos(us_x, us_y);
-	disp_reg(pst_lcd->st_gram.us_gram);
+	disp_reg(pst_lcd->st_gram.us_wgram);
 	disp_wdata(us_color);
 	
 	return;
@@ -260,7 +285,7 @@ void bsp_disp_draw_line(uint16_t us_x1, uint16_t us_y1, uint16_t us_x2, uint16_t
 	i_incy = i_delta_y == 0 ? 0 : i_delta_y / (us_y2 - us_y1);
 	i_distance = i_delta_x > i_delta_y ? i_delta_x : i_delta_y;
 
-	for (t = 0; t <= i_distance+1; t ++)
+	for (t = 0; t <= i_distance + 1; t ++)
 	{  
 		bsp_disp_draw_point(i_row, i_col, 0x0000);
 		i_xerr += i_delta_x ; 
@@ -297,7 +322,7 @@ void bsp_disp_clear(uint16_t us_color)
 	int32_t y = 0;
 	lcd_panel_t *pst_lcd = gpst_drv;
 	
-	disp_reg(pst_lcd->st_gram.us_gram);
+	disp_reg(pst_lcd->st_gram.us_wgram);
 	
 	for (y = 0; y < pst_lcd->ui_yres; y ++) {
 		for (x = 0; x < pst_lcd->ui_xres; x ++) {
@@ -308,12 +333,28 @@ void bsp_disp_clear(uint16_t us_color)
 	return;
 }
 
+void bsp_disp_register(bsp_disp_t **ppst_bsp_disp)
+{
+	bsp_disp_t *pst_disp = &gst_disp;
+	
+	pst_disp->set_pixel 	= disp_set_pixel;
+	pst_disp->get_pixel 	= disp_get_pixel;
+	pst_disp->fill_color 	= disp_fill_color;
+	*ppst_bsp_disp = pst_disp;
+	
+	return;
+}
+
 void bsp_disp_init(void)
 {
 	GPIO_InitTypeDef st_gpio_inidef;
 	board_t *pst_bd = board_get();
 	lcd_panel_t *pst_lcd = pst_bd->pf_lcd_panel_get();
+	bsp_disp_t *pst_disp = &gst_disp;
+
 	gpst_drv = pst_lcd;
+	pst_disp->ui_xres = pst_lcd->ui_xres;
+	pst_disp->ui_yres = pst_lcd->ui_yres;
 	
  	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC|RCC_APB2Periph_GPIOB|RCC_APB2Periph_AFIO, ENABLE);
 	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable , ENABLE);

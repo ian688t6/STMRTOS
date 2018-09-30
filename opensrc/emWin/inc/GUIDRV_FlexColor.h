@@ -191,7 +191,7 @@ extern const GUI_DEVICE_API GUIDRV_FlexColor_API;
   //
   void GUIDRV_FlexColor_SetFunc(GUI_DEVICE * pDevice, GUI_PORT_API * pHW_API, void (* pfFunc)(GUI_DEVICE *), void (* pfMode)(GUI_DEVICE *));
   void GUIDRV_FlexColor_Config (GUI_DEVICE * pDevice, CONFIG_FLEXCOLOR * pConfig);
-
+	void GUIDRV_FlexColor_SetDisp(void *pv_arg);
   //
   // Setting up hardware interface to be used
   //

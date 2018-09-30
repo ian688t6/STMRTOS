@@ -56,7 +56,10 @@ Purpose     : Template driver, could be used as starting point for new
 
 #include "LCD_Private.h"
 #include "GUI_Private.h"
+#include "GUIDRV_FlexColor.h"
 #include "LCD_ConfDefaults.h"
+#include "basic.h"
+#include "bsp_disp.h"
 
 /*********************************************************************
 *
@@ -64,6 +67,8 @@ Purpose     : Template driver, could be used as starting point for new
 *
 **********************************************************************
 */
+static bsp_disp_t *bsp_disp = NULL;
+
 /*********************************************************************
 *
 *       Macros for MIRROR_, SWAP_ and LUT_
@@ -156,7 +161,8 @@ static void _SetPixelIndex(GUI_DEVICE * pDevice, int x, int y, int PixelIndex) {
     {
       //
       // Write into hardware ... Adapt to your system
-      //
+      // bsp_disp_set_pixel
+		bsp_disp->set_pixel(x, y, PixelIndex);
       // TBD by customer...
       //
     }
@@ -195,10 +201,9 @@ static unsigned int _GetPixelIndex(GUI_DEVICE * pDevice, int x, int y) {
     {
       //
       // Write into hardware ... Adapt to your system
+		PixelIndex = bsp_disp->get_pixel(x, y);
+		// TBD by customer...
       //
-      // TBD by customer...
-      //
-      PixelIndex = 0;
     }
     #if (LCD_MIRROR_X == 0) && (LCD_MIRROR_Y == 0) && (LCD_SWAP_XY == 0)
       #undef xPhys
@@ -225,9 +230,13 @@ static void _XorPixel(GUI_DEVICE * pDevice, int x, int y) {
 *       _FillRect
 */
 static void _FillRect(GUI_DEVICE * pDevice, int x0, int y0, int x1, int y1) {
-  LCD_PIXELINDEX PixelIndex;
-  int x;
-
+	/* Todo: bsp_disp_fill */
+	bsp_disp->fill_color(x0, y0, x1, y1, LCD_COLORINDEX);
+	
+#if 0
+	LCD_PIXELINDEX PixelIndex;
+  int x;	
+	
   PixelIndex = LCD__GetColorIndex();
   if (GUI_pContext->DrawMode & LCD_DRAWMODE_XOR) {
     for (; y0 <= y1; y0++) {
@@ -242,6 +251,8 @@ static void _FillRect(GUI_DEVICE * pDevice, int x0, int y0, int x1, int y1) {
       }
     }
   }
+#endif
+	return;
 }
 
 /*********************************************************************
@@ -833,4 +844,9 @@ const GUI_DEVICE_API GUIDRV_Template_API = {
   _GetRect,
 };
 
+void GUIDRV_FlexColor_SetDisp(void *pv_arg)
+{
+	bsp_disp = (bsp_disp_t *)pv_arg;
+	return;
+}
 /*************************** End of file ****************************/
