@@ -365,7 +365,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_HD,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>.\core;.\system;.\stm32_fwlib\inc;.\os\include;.\os\portable\RVDS\ARM_CM3;.\bsp;.\bsp\board;.\bsp\share;.\opensrc\emWin\inc;.\opensrc\emWin\Config</IncludePath>
+              <IncludePath>.\core;.\system;.\stm32_fwlib\inc;.\os\include;.\os\portable\RVDS\ARM_CM3;.\bsp;.\bsp\board;.\bsp\share;.\opensrc\emWin\inc;.\opensrc\emWin\Config;.\opensrc\emWin\Demo</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -702,6 +702,138 @@
         </Group>
         <Group>
           <GroupName>emwindemo</GroupName>
+          <Files>
+            <File>
+              <FileName>GUIDEMO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_AntialiasedText.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_AntialiasedText.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_Automotive.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_Automotive.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_BarGraph.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_BarGraph.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_Bitmap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_Bitmap.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_ColorBar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_ColorBar.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_Conf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_Conf.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_Cursor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_Cursor.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_Fading.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_Fading.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_Graph.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_Graph.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_IconView.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_IconView.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_ImageFlow.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_ImageFlow.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_Intro.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_Intro.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_Listview.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_Listview.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_RadialMenu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_RadialMenu.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_Resource.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_Resource.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_Skinning.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_Skinning.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_Speed.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_Speed.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_Speedometer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_Speedometer.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_Start.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_Start.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_Touch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_Touch.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_TransparentDialog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_TransparentDialog.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_Treeview.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_Treeview.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_VScreen.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_VScreen.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_WashingMachine.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_WashingMachine.c</FilePath>
+            </File>
+            <File>
+              <FileName>GUIDEMO_ZoomAndRotate.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Demo\GUIDEMO_ZoomAndRotate.c</FilePath>
+            </File>
+          </Files>
         </Group>
       </Groups>
     </Target>
