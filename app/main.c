@@ -64,9 +64,19 @@ static void led1_task(void *pvParameters)
 		rtos_mdelay(800);		
 	}
 }
+#define SCREEN_DIV          6 // 2^6 = 64
+#define FACTOR_EMWIN        4
+#define FACTOR_DESC        11
+#define FACTOR_ANY_COMP    22
+#define FACTOR_VERSION     31
+#define FACTOR_LOGO        38
+#define FACTOR_WWW         56
 
 static void gui_task(void *pv_param)
 {
+//	char acVersion[30] = "Version of STemWin: ";
+	int  xCenter, xSize, ySize;
+
 	printf("gui_task ...\r\n");
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, ENABLE);
 	GUI_Init();
@@ -75,8 +85,19 @@ static void gui_task(void *pv_param)
 	GUI_SetBkColor(GUI_BLUE);
 	GUI_SetColor(GUI_YELLOW);
 	GUI_Clear();
+	
+	xSize   = LCD_GetXSize();
+	ySize   = LCD_GetYSize();
+	xCenter = xSize >> 1;
+	GUI_SetTextMode(GUI_TM_TRANS);
+  //
+  // emWin
+  //
+	GUI_SetColor(GUI_WHITE);
+//	GUI_SetFont(&GUI_FontRounded22);
 	GUI_SetFont(&GUI_Font24_ASCII);
-	GUI_DispStringAt("Hello World!", 0, 0);
+	GUI_DispStringHCenterAt("STemWin", xCenter, (FACTOR_EMWIN * ySize) >> SCREEN_DIV);
+
 	printf("gui_task 1...\r\n");
 	for (;;)
 	{

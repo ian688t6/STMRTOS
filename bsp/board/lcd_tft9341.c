@@ -1,6 +1,8 @@
 #include "basic.h"
 #include "lcd_core.h"
-	
+
+#define LCD_VERTICAL
+
 static uint8_t gaui_lcdon_cmd0[] = 
 {
 	0xCF, 0x00, 0xC1, 0x30,
@@ -51,10 +53,17 @@ static uint8_t gaui_lcdon_cmd9[] =
 	0xC7, 0xB7,
 };
 
+#ifdef LCD_VERTICAL
 static uint8_t gaui_lcdon_cmd10[] = 
 {
 	0x36, 0x08,
 };
+#else
+static uint8_t gaui_lcdon_cmd10[] = 
+{
+	0x36, 0xa8,
+};
+#endif
 
 static uint8_t gaui_lcdon_cmd11[] = 
 {
@@ -90,7 +99,7 @@ static uint8_t gaui_lcdon_cmd17[] =
 {
 	0xE1, 0x00, 0x15, 0x17, 0x07, 0x11, 0x06, 0x2B, 0x56, 0x3C, 0x05, 0x10, 0x0F, 0x3F, 0x3F, 0x0F,
 };
-
+#ifdef LCD_VERTICAL
 static uint8_t gaui_lcdon_cmd18[] = 
 {
 	0x2B, 0x00, 0x00, 0x01, 0x3F,
@@ -100,6 +109,17 @@ static uint8_t gaui_lcdon_cmd19[] =
 {
 	0x2A, 0x00, 0x00, 0x00, 0xEF,
 };
+#else
+static uint8_t gaui_lcdon_cmd18[] = 
+{
+	0x2B, 0x00, 0x00, 0x00, 0xEF,
+};
+
+static uint8_t gaui_lcdon_cmd19[] = 
+{
+	0x2A, 0x00, 0x00, 0x01, 0x3F,
+};
+#endif
 
 static uint8_t gaui_lcdon_cmd20[] = 
 {
@@ -171,8 +191,13 @@ static lcd_panel_t gst_lcd_tft9341 =
 		.us_rgram = 0X2E,
 	},
 	.us_framerate = 60,
+#ifdef LCD_VERTICAL	
 	.ui_xres = 240,
 	.ui_yres = 320,
+#else
+	.ui_xres = 320,
+	.ui_yres = 240,
+#endif	
 	.st_cmd_init = {
 		.past_cmds = gast_lcdon_cmds,
 		.ui_cmd_count = CMD_ARRAY_SIZE(gast_lcdon_cmds),

@@ -78,6 +78,7 @@ Purpose     : Configures emWins abilities, fonts etc.
   #define GUI_SUPPORT_TOUCH       (1)  // Support touchscreen
 #endif
 
+#define GUI_MAXTASK				  (5) 
 /*********************************************************************
 *
 *       Default font
