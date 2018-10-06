@@ -15,7 +15,7 @@
 #define LED1_STK_SIZE		(50)
 
 #define GUI_TASK_PRIO		(4)
-#define GUI_STK_SIZE		(50)
+#define GUI_STK_SIZE		(512)
 
 TaskHandle_t StartTask_Handler;
 TaskHandle_t LED0Task_Handler;
