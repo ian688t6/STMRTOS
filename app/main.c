@@ -4,6 +4,7 @@
 #include "bsp.h"
 #include "task.h"
 #include "GUI.h"
+#include "GUIDemo.h"
 
 #define START_TASK_PRIO		(1)
 #define START_STK_SIZE		(128)
@@ -69,6 +70,8 @@ static void gui_task(void *pv_param)
 	printf("gui_task ...\r\n");
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, ENABLE);
 	GUI_Init();
+	WM_SetCreateFlags(WM_CF_MEMDEV);
+
 	GUI_SetBkColor(GUI_BLUE);
 	GUI_SetColor(GUI_YELLOW);
 	GUI_Clear();
@@ -77,6 +80,7 @@ static void gui_task(void *pv_param)
 	printf("gui_task 1...\r\n");
 	for (;;)
 	{
+//		GUIDEMO_Main();
 		rtos_mdelay(500);
 	}
 }
