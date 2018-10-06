@@ -75,39 +75,37 @@ static void led1_task(void *pvParameters)
 static void gui_task(void *pv_param)
 {
 //	char acVersion[30] = "Version of STemWin: ";
-	int  xCenter, xSize, ySize;
+//	int  xCenter, xSize, ySize;
 
 	printf("gui_task ...\r\n");
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, ENABLE);
-	GUI_Init();
-	WM_SetCreateFlags(WM_CF_MEMDEV);
-
-	GUI_SetBkColor(GUI_BLUE);
-	GUI_SetColor(GUI_YELLOW);
-	GUI_Clear();
-	
-	xSize   = LCD_GetXSize();
-	ySize   = LCD_GetYSize();
-	xCenter = xSize >> 1;
-	GUI_SetTextMode(GUI_TM_TRANS);
+//	GUI_SetBkColor(GUI_BLUE);
+//	GUI_SetColor(GUI_WHITE);
+//	GUI_Clear();
+//	
+//	xSize   = LCD_GetXSize();
+//	ySize   = LCD_GetYSize();
+//	xCenter = xSize >> 1;
+//	GUI_SetTextMode(GUI_TM_TRANS);
   //
   // emWin
   //
-	GUI_SetColor(GUI_WHITE);
-//	GUI_SetFont(&GUI_FontRounded22);
-	GUI_SetFont(&GUI_Font24_ASCII);
-	GUI_DispStringHCenterAt("STemWin", xCenter, (FACTOR_EMWIN * ySize) >> SCREEN_DIV);
+//	GUI_SetFont(&GUI_Font24_ASCII);
+//	GUI_DispStringHCenterAt("STemWin", xCenter, (FACTOR_EMWIN * ySize) >> SCREEN_DIV);
 
 	printf("gui_task 1...\r\n");
 	for (;;)
 	{
-//		GUIDEMO_Main();
+		GUIDEMO_Main();
 		rtos_mdelay(500);
 	}
 }
 
 static void start_task(void *pvParameters)
 {
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC,ENABLE);//开启CRC时钟
+	GUI_Init();  					//STemWin初始化
+	WM_SetCreateFlags(WM_CF_MEMDEV);
+	
 	taskENTER_CRITICAL();
 	xTaskCreate((TaskFunction_t)led0_task,
 				(const char *)"led0_task",
@@ -143,6 +141,7 @@ void Delay(u32 count)
 int main(void)
 {	
 	rtos_sys_init();
+	rtos_mem_init();
 	bsp_uart_init();
 	bsp_disp_init();
 	rtos_console_init();

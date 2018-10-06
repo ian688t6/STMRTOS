@@ -835,6 +835,16 @@
             </File>
           </Files>
         </Group>
+        <Group>
+          <GroupName>mem</GroupName>
+          <Files>
+            <File>
+              <FileName>rtos_mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\system\rtos_mem.c</FilePath>
+            </File>
+          </Files>
+        </Group>
       </Groups>
     </Target>
   </Targets>

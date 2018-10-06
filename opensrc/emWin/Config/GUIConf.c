@@ -53,6 +53,7 @@ Purpose     : Display controller initialization
 #include "basic.h"
 #include "GUI.h"
 #include "FreeRTOS.h"
+#include "rtos_mem.h"
 /*********************************************************************
 *
 *       Defines
@@ -62,7 +63,7 @@ Purpose     : Display controller initialization
 //
 // Define the available number of bytes available for the GUI
 //
-#define GUI_NUMBYTES  	(15 * 1024)
+#define GUI_NUMBYTES  	(20 * 1024)
 #define GUI_BLOCKSIZE	(0x80)
 /*********************************************************************
 *
@@ -84,15 +85,18 @@ void GUI_X_Config(void) {
   //
 //  static U32 aMemory[GUI_NUMBYTES / 4];
 	printf("GUI_X_Config ...\r\n");
- 	U8 *puc_mem = pvPortMalloc(GUI_NUMBYTES);
-	if (NULL == puc_mem)
-	{
-		return;
-	}
+// 	U8 *puc_mem = pvPortMalloc(GUI_NUMBYTES);
+//	if (NULL == puc_mem)
+//	{
+//		return;
+//	}
+//	
+	U32 *aMemory = rtos_mem_alloc(GUI_NUMBYTES); //从内部RAM中分配GUI_NUMBYTES字节的内存
+
 //
   // Assign memory to emWin
   //
-	GUI_ALLOC_AssignMemory(puc_mem, GUI_NUMBYTES);
+	GUI_ALLOC_AssignMemory((U32 *)aMemory, GUI_NUMBYTES);
 	GUI_ALLOC_SetAvBlockSize(GUI_BLOCKSIZE);  
 //
   // Set default font
