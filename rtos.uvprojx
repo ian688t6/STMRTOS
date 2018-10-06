@@ -693,7 +693,15 @@
               <FileType>1</FileType>
               <FilePath>.\opensrc\emWin\Config\LCDConf.c</FilePath>
             </File>
+            <File>
+              <FileName>GUI_X_Touch_Analog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\opensrc\emWin\Config\GUI_X_Touch_Analog.c</FilePath>
+            </File>
           </Files>
+        </Group>
+        <Group>
+          <GroupName>emwindemo</GroupName>
         </Group>
       </Groups>
     </Target>
