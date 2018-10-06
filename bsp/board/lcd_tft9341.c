@@ -1,7 +1,7 @@
 #include "basic.h"
 #include "lcd_core.h"
 
-#define LCD_VERTICAL
+#define LCD_HORIZONTAL
 
 static uint8_t gaui_lcdon_cmd0[] = 
 {

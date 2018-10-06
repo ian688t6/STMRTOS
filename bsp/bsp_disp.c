@@ -176,6 +176,11 @@ static uint16_t disp_get_pixel(uint16_t us_x, uint16_t us_y)
 	LCD_RD_SET;
 	g=r&0XFF;//??9341,???????RG??,R??,G??,??8?
 	g<<=8;
+	
+	LCD_CS_SET;
+	GPIOB->CRL=0X33333333; 		//PB0-7  上拉输出
+	GPIOB->CRH=0X33333333; 		//PB8-15 上拉输出
+	GPIOB->ODR=0XFFFF;    		//全部输出高  
 
 	return (((r>>11)<<11)|((g>>10)<<5)|(b>>11));
 }
