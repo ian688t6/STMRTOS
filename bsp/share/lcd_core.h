@@ -1,6 +1,10 @@
 #ifndef __LCD_CORE_H__
 #define __LCD_CORE_H__
 
+#define LCD_VERTICAL	(0)
+#define LCD_HORIZONTAL	(1)
+#define LCD_ORITATION	LCD_HORIZONTAL
+
 typedef struct lcd_cmd 
 {
 	/* payload data length */
