@@ -193,6 +193,7 @@ static lcd_panel_t gst_lcd_tft9341 =
 		.us_rgram = 0X2E,
 	},
 	.us_framerate = 60,
+	.us_flag = FLAG_DUMMY_READ | FLAG_TWICE_READ,
 #if (LCD_ORITATION == 0)
 	/* LCD_VERTICAL */
 	.ui_xres = 240,

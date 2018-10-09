@@ -179,8 +179,9 @@ static lcd_panel_t gst_lcd_tft1963 =
 		.us_rgram = 0x2E,
 	},
 	.us_framerate = 60,
-	.ui_xres = 480,
-	.ui_yres = 800,
+	.us_flag = 0,
+	.ui_xres = 800,
+	.ui_yres = 480,
 	
 	.st_cmd_init = {
 		.past_cmds = gast_lcdon_cmds,

@@ -21,6 +21,16 @@
 static lcd_panel_t *gpst_drv;
 static bsp_disp_t gst_disp;
 
+static uint16_t disp_bgr2rgb(uint16_t c)
+{
+	u16  r,g,b,rgb;   
+	b=(c>>0)&0x1f;
+	g=(c>>5)&0x3f;
+	r=(c>>11)&0x1f;	 
+	rgb=(b<<11)+(g<<5)+(r<<0);		 
+	return(rgb);
+}
+
 static void disp_reg(uint16_t us_reg)
 {
 	LCD_RS_CLR;
@@ -83,12 +93,16 @@ static void disp_setpos(uint16_t us_x, uint16_t us_y)
 {
 	lcd_panel_t *pst_lcd = gpst_drv;	
 	
+//	printf("set pos x:%d y:%d \r\n", us_x, us_y);
+	
 	switch (pst_lcd->st_cmd_setpos.pst_x->ui_size)
 	{
 		case 1:
 		disp_reg(pst_lcd->st_cmd_setpos.pst_x->puc_payload[0]);
 		disp_wdata(us_x >> 8);
 		disp_wdata(us_x & 0xff);
+		disp_wdata((pst_lcd->ui_xres - 1) >> 8);		
+		disp_wdata((pst_lcd->ui_xres - 1) & 0xff);
 		break;
 		
 		case 2:
@@ -108,6 +122,8 @@ static void disp_setpos(uint16_t us_x, uint16_t us_y)
 		disp_reg(pst_lcd->st_cmd_setpos.pst_y->puc_payload[0]);
 		disp_wdata(us_y >> 8);
 		disp_wdata(us_y & 0xff);			
+		disp_wdata((pst_lcd->ui_yres - 1) >> 8);		
+		disp_wdata((pst_lcd->ui_yres - 1) & 0xff);
 		break;
 		
 		case 2:
@@ -146,7 +162,8 @@ static void disp_set_pixel(uint16_t us_x, uint16_t us_y, uint16_t us_color)
 
 static uint16_t disp_get_pixel(uint16_t us_x, uint16_t us_y)
 {
- 	u16 r,g,b;
+	uint16_t us_ret;
+	uint16_t us_r, us_g, us_b;
 	lcd_panel_t *pst_lcd = gpst_drv;
 	
 	if ((us_x >= pst_lcd->ui_xres) || (us_y >= pst_lcd->ui_yres))
@@ -154,35 +171,51 @@ static uint16_t disp_get_pixel(uint16_t us_x, uint16_t us_y)
 	
 	disp_setpos(us_x, us_y);
 	disp_reg(pst_lcd->st_gram.us_rgram);
-	
+
 	GPIOB->CRL=0X88888888;
 	GPIOB->CRH=0X88888888;
 	GPIOB->ODR=0XFFFF;
 
 	LCD_RS_SET;
 	LCD_CS_CLR;	    
-	//????(?GRAM?,??????)	
-	LCD_RD_CLR;	
-  	rtos_udelay(1);//??1us					   
-	LCD_RD_SET;
- 	//dummy READ
-	LCD_RD_CLR;					   
-	rtos_udelay(1);//??1us					   
- 	r=DATAIN;  	//??????
-	LCD_RD_SET;
 
-	LCD_RD_CLR;					   
-	b=DATAIN;//?????  	  
+	//读取数据(读GRAM时,第一次为假读)	
+	LCD_RD_CLR;		   
+	rtos_udelay(1);										//延时		
+ 	us_ret = DATAIN; 										//实际坐标颜色 
 	LCD_RD_SET;
-	g=r&0XFF;//??9341,???????RG??,R??,G??,??8?
-	g<<=8;
+	
+	if (pst_lcd->us_flag & FLAG_DUMMY_READ)
+	{
+		LCD_RD_CLR;		   
+		rtos_udelay(1);										//延时		
+		us_r = DATAIN;  										//实际坐标颜色 
+		LCD_RD_SET; 
+		if (pst_lcd->us_flag & FLAG_TWICE_READ)
+		{
+			LCD_RD_CLR;					   
+			rtos_udelay(1);										//延时
+			us_b = DATAIN;//读取蓝色值  	  
+			LCD_RD_SET;
+			us_g = us_r&0XFF;//对于9341,第一次读取的是RG的值,R在前,G在后,各占8位
+			us_g <<= 8;
+			us_ret = (((us_r>>11)<<11)|((us_g>>10)<<5)|(us_b>>11));
+		}
+		else
+		{
+			LCD_RD_CLR;					   
+			LCD_RD_SET;
+			us_r = DATAIN;//6804第二次读取的才是真实值 
+			us_ret = us_r;
+		}
+	}
 	
 	LCD_CS_SET;
-	GPIOB->CRL=0X33333333; 		//PB0-7  上拉输出
-	GPIOB->CRH=0X33333333; 		//PB8-15 上拉输出
-	GPIOB->ODR=0XFFFF;    		//全部输出高  
-
-	return (((r>>11)<<11)|((g>>10)<<5)|(b>>11));
+	GPIOB->CRL=0X33333333; 			//PB0-7  上拉输出
+	GPIOB->CRH=0X33333333; 			//PB8-15 上拉输出
+	GPIOB->ODR=0XFFFF;    			//全部输出高  
+	
+	return !(pst_lcd->us_flag & FLAG_BGR2RGB) ? us_ret: disp_bgr2rgb(us_ret);					//1963直接读就可以 
 }
 
 static void disp_fill_color(uint16_t us_x1, uint16_t us_y1, uint16_t us_x2, uint16_t us_y2, uint16_t us_color)
@@ -414,6 +447,6 @@ void bsp_disp_init(void)
 	rtos_mdelay(50);
 	
 	disp_tx_cmds(pst_lcd->st_cmd_init.past_cmds, pst_lcd->st_cmd_init.ui_cmd_count);
-	
+//	bsp_disp_test();
 	return;
 }

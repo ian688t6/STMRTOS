@@ -75,7 +75,7 @@ static void led1_task(void *pvParameters)
 static void gui_task(void *pv_param)
 {
 //	char acVersion[30] = "Version of STemWin: ";
-//	int  xCenter, xSize, ySize;
+	int  xCenter, xSize, ySize;
 
 	printf("gui_task ...\r\n");
 //	GUI_SetBkColor(GUI_BLUE);
@@ -86,15 +86,19 @@ static void gui_task(void *pv_param)
 //	ySize   = LCD_GetYSize();
 //	xCenter = xSize >> 1;
 //	GUI_SetTextMode(GUI_TM_TRANS);
-  //
-  // emWin
-  //
+//  //
+//  // emWin
+//  //
 //	GUI_SetFont(&GUI_Font24_ASCII);
 //	GUI_DispStringHCenterAt("STemWin", xCenter, (FACTOR_EMWIN * ySize) >> SCREEN_DIV);
 
 	printf("gui_task 1...\r\n");
 	for (;;)
 	{
+			printf("gui_task 2...\r\n");
+//	GUI_SetBkColor(GUI_BLUE);
+//	GUI_SetColor(GUI_WHITE);
+//	GUI_Clear();
 		GUIDEMO_Main();
 		rtos_mdelay(500);
 	}

@@ -181,9 +181,9 @@ void LCD_X_Config(void) {
 	LCD_SetSizeEx    (0, gpst_disp->ui_xres, gpst_disp->ui_yres);
 	LCD_SetVSizeEx   (0, gpst_disp->ui_xres, gpst_disp->ui_yres);
   
-	GUI_TOUCH_SetOrientation(GUI_SWAP_XY|GUI_MIRROR_Y); 
-	GUI_TOUCH_Calibrate(GUI_COORD_X,0,240,155,3903); 	
-	GUI_TOUCH_Calibrate(GUI_COORD_Y,0,320,188,3935);
+//	GUI_TOUCH_SetOrientation(GUI_SWAP_XY|GUI_MIRROR_Y); 
+//	GUI_TOUCH_Calibrate(GUI_COORD_X,0,240,155,3903); 	
+//	GUI_TOUCH_Calibrate(GUI_COORD_Y,0,320,188,3935);
 
   #if 0
   //

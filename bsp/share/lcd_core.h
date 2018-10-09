@@ -1,9 +1,13 @@
 #ifndef __LCD_CORE_H__
 #define __LCD_CORE_H__
 
-#define LCD_VERTICAL	(0)
-#define LCD_HORIZONTAL	(1)
-#define LCD_ORITATION	LCD_HORIZONTAL
+#define LCD_VERTICAL		(0)
+#define LCD_HORIZONTAL		(1)
+#define LCD_ORITATION		LCD_HORIZONTAL
+
+#define FLAG_DUMMY_READ		(1 << 0)
+#define FLAG_TWICE_READ		(1 << 1)
+#define FLAG_BGR2RGB		(1 << 2)
 
 typedef struct lcd_cmd 
 {
@@ -40,6 +44,7 @@ typedef struct
 	uint16_t		us_devid;
 	uint16_t		us_id_addr;
 	lcd_gram_t		st_gram;
+	uint16_t		us_flag;
 	uint16_t		us_framerate;
 	uint32_t		ui_xres;
 	uint32_t		ui_yres;
