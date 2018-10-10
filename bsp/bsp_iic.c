@@ -3,6 +3,9 @@
 #include "rtos.h"
 #include "bsp_iic.h"
 
+#define IIC_LOCK(lock) 		xSemaphoreTakeRecursive(lock, portMAX_DELAY)
+#define IIC_UNLOCK(lock)	xSemaphoreGiveRecursive(lock)
+
 static bsp_iic_t gst_dev;
 
 static void iic_start(void)
@@ -38,8 +41,7 @@ int32_t bsp_iic_read(uint8_t uc_reg, uint8_t *puc_data, uint32_t ui_len)
 	bsp_iic_t *pst_dev = &gst_dev;
 	
 	/* Todo: iic lock */
-	
-	
+	IIC_LOCK(pst_dev->st_lock);
 	do {
 		/* Todo: iic start */
 		iic_start();
@@ -60,6 +62,7 @@ int32_t bsp_iic_read(uint8_t uc_reg, uint8_t *puc_data, uint32_t ui_len)
 	} while (0);
 	
 	/* Todo: iic_unlock */
+	IIC_UNLOCK(pst_dev->st_lock);
 	
 	return 0;
 }
@@ -70,6 +73,7 @@ int32_t bsp_iic_write(uint8_t uc_reg, uint8_t *puc_data, uint32_t ui_len)
 	bsp_iic_t *pst_dev = &gst_dev;
 
 	/* Todo: iic lock */
+	IIC_LOCK(pst_dev->st_lock);
 	
 	do {
 		/* Todo: iic start */
@@ -90,12 +94,17 @@ int32_t bsp_iic_write(uint8_t uc_reg, uint8_t *puc_data, uint32_t ui_len)
 	} while(0);
 	
 	/* Todo: iic_unlock */
-
+	IIC_UNLOCK(pst_dev->st_lock);
+	
 	return 0;
 }
 
 void bsp_iic_init(void)
 {
+	bsp_iic_t *pst_dev = &gst_dev;
+		
+	pst_dev->st_lock = xSemaphoreCreateRecursiveMutex();
+	
 	return;
 }
 

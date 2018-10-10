@@ -1,12 +1,16 @@
 #ifndef __BSP_IIC_H__
 #define __BSP_IIC_H__
 
+#include <FreeRTOS.h>
+#include <semphr.h>
+
 #define IIC_ACK		0
 #define IIC_NACK	1	
 
 typedef struct
 {
-	uint8_t 	uc_dev;
+	uint8_t uc_dev;
+	SemaphoreHandle_t st_lock;
 	int32_t (*write)(uint8_t uc_reg, uint8_t *puc_buf, uint32_t ui_len);
 	int32_t (*read) (uint8_t uc_reg, uint8_t *puc_buf, uint32_t ui_len);
 } bsp_iic_t;
