@@ -647,6 +647,16 @@
               <FileType>1</FileType>
               <FilePath>.\bsp\bsp_disp.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_iic.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\bsp\bsp_iic.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_tp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\bsp\bsp_tp.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -661,6 +671,11 @@
               <FileName>lcd_tft1963.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\bsp\board\lcd_tft1963.c</FilePath>
+            </File>
+            <File>
+              <FileName>tp_ft5206.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\bsp\board\tp_ft5206.c</FilePath>
             </File>
           </Files>
         </Group>
