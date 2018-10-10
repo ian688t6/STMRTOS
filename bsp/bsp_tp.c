@@ -7,9 +7,11 @@
 
 void bsp_tp_init(void)
 {
-	board_t *pst_board = board_get();
-	touch_panel_t *pst_tp = pst_board->pf_touch_panel_get();
-	bsp_iic_t *pst_iic = bsp_iic_register(pst_tp->uc_dev);
+	board_t 		*pst_bd 	= board_get();
+	touch_panel_t 	*pst_tp 	= pst_bd->pf_touch_panel_get();
+	bsp_iic_t 		*pst_iic 	= bsp_iic_register(pst_tp->uc_dev);
+	
+	pst_tp->init();
 	
 	return;
 }

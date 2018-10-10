@@ -3,9 +3,19 @@
 
 #include <FreeRTOS.h>
 #include <semphr.h>
+#include "bsp_gpio.h"
 
-#define IIC_ACK		0
-#define IIC_NACK	1	
+#define IIC_ACK		1
+#define IIC_NAK		0	
+
+//IO方向设置
+#define GPIO_SDA_IN()  {GPIOC->CRL&=0XFFFF0FFF;GPIOC->CRL|=8<<4*3;}
+#define GPIO_SDA_OUT() {GPIOC->CRL&=0XFFFF0FFF;GPIOC->CRL|=3<<4*3;}
+
+//IO操作函数	 
+#define GPIO_IIC_SCL    PCout(0) 			//SCL     
+#define GPIO_IIC_SDA    PCout(3) 			//SDA	 
+#define GPIO_READ_SDA   PCin(3)  			//输入SDA 
 
 typedef struct
 {
