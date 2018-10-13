@@ -14,10 +14,10 @@ static void iic_start(void)
 	GPIO_IIC_SDA=1;	  	  
 	GPIO_IIC_SCL=1;
 	
-	rtos_udelay(5);
+	rtos_udelay(10);
  	GPIO_IIC_SDA=0;//START:when CLK is high,DATA change form high to low 
 	
-	rtos_udelay(5);
+	rtos_udelay(10);
 	GPIO_IIC_SCL=0;//钳住I2C总线，准备发送或接收数据 
 
 	return;
@@ -28,9 +28,9 @@ static void iic_stop(void)
 	GPIO_SDA_OUT();//sda线输出
 	GPIO_IIC_SCL=0;
 	GPIO_IIC_SDA=0;
-	rtos_udelay(5);
+	rtos_udelay(10);
 	GPIO_IIC_SCL=1;
-	rtos_udelay(5);
+	rtos_udelay(10);
 	GPIO_IIC_SDA=1;//STOP:when CLK is high DATA change form low to high 
 	
 	return;
@@ -68,9 +68,9 @@ static int32_t iic_ack(void)
 	GPIO_IIC_SCL = 0;
 	GPIO_SDA_OUT();
 	GPIO_IIC_SDA = 0;
-	rtos_udelay(5);
+	rtos_udelay(10);
 	GPIO_IIC_SCL = 1;
-	rtos_udelay(5);
+	rtos_udelay(10);
 	GPIO_IIC_SCL = 0;
 	
 	return 0;
@@ -81,9 +81,9 @@ static int32_t iic_nak(void)
 	GPIO_IIC_SCL=0;
 	GPIO_SDA_OUT();
 	GPIO_IIC_SDA=1;
-	rtos_udelay(5);
+	rtos_udelay(10);
 	GPIO_IIC_SCL=1;
-	rtos_udelay(5);
+	rtos_udelay(10);
 	GPIO_IIC_SCL=0;
 	
 	return 0;
@@ -102,6 +102,7 @@ static uint8_t iic_read(uint32_t ui_ack)
 		GPIO_IIC_SCL = 1;  
 		uc_data <<= 1;
 		uc_data |= GPIO_READ_SDA !=0 ? 0x01 : 0x00;
+		//if(GPIO_READ_SDA) uc_data++; 
 	}
 	
 	if (!ui_ack)
@@ -125,10 +126,10 @@ static void iic_write(uint8_t uc_data)
         uc_data <<= 1; 	      
 
 		GPIO_IIC_SCL = 1;
-		rtos_udelay(5);
+		rtos_udelay(10);
 
 		GPIO_IIC_SCL = 0;	
-		rtos_udelay(5);
+		rtos_udelay(10);
     }
 	
 	return;
@@ -202,15 +203,20 @@ int32_t bsp_iic_write(uint8_t uc_reg, uint8_t *puc_data, uint32_t ui_len)
 void bsp_iic_init(void)
 {
 	bsp_iic_t *pst_dev = &gst_dev;
-	GPIO_InitTypeDef st_gpio_init;
+//	GPIO_InitTypeDef st_gpio_init;
 
- 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE); 	// enable PORTC Clock
-	st_gpio_init.GPIO_Pin 	= GPIO_Pin_0 | GPIO_Pin_3;		// PC0,PC3
-	st_gpio_init.GPIO_Mode 	= GPIO_Mode_Out_PP;				// Mode out pp
-	st_gpio_init.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOC, &st_gpio_init);
-	GPIO_SetBits(GPIOC, GPIO_Pin_0 | GPIO_Pin_3);
+// 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE); 	// enable PORTC Clock
+//	st_gpio_init.GPIO_Pin 	= GPIO_Pin_0 | GPIO_Pin_3;		// PC0,PC3
+//	st_gpio_init.GPIO_Mode 	= GPIO_Mode_Out_PP;				// Mode out pp
+//	st_gpio_init.GPIO_Speed = GPIO_Speed_50MHz;
+//	GPIO_Init(GPIOC, &st_gpio_init);
+//	GPIO_SetBits(GPIOC, GPIO_Pin_0 | GPIO_Pin_3);
 	
+	RCC->APB2ENR|=1<<4;		//先使能外设IO PORTC时钟    
+	GPIOC->CRL&=0XFFFF0FF0;	//PC0,PC3 推挽输出
+	GPIOC->CRL|=0X00003003;	   
+	GPIOC->ODR|=1<<1;	    //PC0 输出高	 
+	GPIOC->ODR|=1<<3;	    //PC3 输出高
 	pst_dev->st_lock = xSemaphoreCreateRecursiveMutex();
 	
 	return;

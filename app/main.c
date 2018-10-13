@@ -124,7 +124,7 @@ static void start_task(void *pvParameters)
 				(void *)NULL,
 				(UBaseType_t)LED1_TASK_PRIO,
 				(TaskHandle_t *)&LED1Task_Handler);
-#if 1
+#if 0
 	xTaskCreate((TaskFunction_t)gui_task,
 				(const char *)"gui_task",
 				(uint16_t)GUI_STK_SIZE,
@@ -147,9 +147,11 @@ int main(void)
 	rtos_sys_init();
 	rtos_mem_init();
 	bsp_uart_init();
-	bsp_disp_init();
 	rtos_console_init();
-	
+
+	bsp_disp_init();
+	bsp_iic_init();
+	bsp_tp_init();
 	led_init();
 	
 	xTaskCreate((TaskFunction_t)start_task,
