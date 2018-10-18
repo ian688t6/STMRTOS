@@ -3,7 +3,7 @@
 #include "FreeRTOS.h"
 #include "bsp.h"
 #include "task.h"
-#include "GUI.h"
+#include "ui.h"
 #include "GUIDemo.h"
 
 #define START_TASK_PRIO		(1)
@@ -76,7 +76,7 @@ static void gui_task(void *pv_param)
 {
 //	char acVersion[30] = "Version of STemWin: ";
 //	int  xCenter, xSize, ySize;
-
+	ui_init();
 	printf("gui_task ...\r\n");
 //	GUI_SetBkColor(GUI_BLUE);
 //	GUI_SetColor(GUI_WHITE);
@@ -105,11 +105,7 @@ static void gui_task(void *pv_param)
 }
 
 static void start_task(void *pvParameters)
-{
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC,ENABLE);//开启CRC时钟
-	GUI_Init();  					//STemWin初始化
-	WM_SetCreateFlags(WM_CF_MEMDEV);
-	
+{	
 	taskENTER_CRITICAL();
 	xTaskCreate((TaskFunction_t)led0_task,
 				(const char *)"led0_task",
