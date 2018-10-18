@@ -75,7 +75,7 @@ static void led1_task(void *pvParameters)
 static void gui_task(void *pv_param)
 {
 //	char acVersion[30] = "Version of STemWin: ";
-	int  xCenter, xSize, ySize;
+//	int  xCenter, xSize, ySize;
 
 	printf("gui_task ...\r\n");
 //	GUI_SetBkColor(GUI_BLUE);
@@ -99,7 +99,7 @@ static void gui_task(void *pv_param)
 //	GUI_SetBkColor(GUI_BLUE);
 //	GUI_SetColor(GUI_WHITE);
 //	GUI_Clear();
-		GUIDEMO_Main();
+//	GUIDEMO_Main();
 		rtos_mdelay(500);
 	}
 }
@@ -124,7 +124,7 @@ static void start_task(void *pvParameters)
 				(void *)NULL,
 				(UBaseType_t)LED1_TASK_PRIO,
 				(TaskHandle_t *)&LED1Task_Handler);
-#if 0
+#if 1
 	xTaskCreate((TaskFunction_t)gui_task,
 				(const char *)"gui_task",
 				(uint16_t)GUI_STK_SIZE,

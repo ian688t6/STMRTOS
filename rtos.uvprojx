@@ -369,7 +369,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_HD,USE_STDPERIPH_DRIVER,OS_SUPPORT</Define>
               <Undefine></Undefine>
-              <IncludePath>.\core;.\system;.\stm32_fwlib\inc;.\os\include;.\os\portable\RVDS\ARM_CM3;.\bsp;.\bsp\board;.\bsp\share;.\opensrc\emWin\inc;.\opensrc\emWin\Config;.\opensrc\emWin\Demo</IncludePath>
+              <IncludePath>.\core;.\system;.\stm32_fwlib\inc;.\os\include;.\os\portable\RVDS\ARM_CM3;.\bsp;.\bsp\board;.\bsp\share;.\opensrc\emWin\inc;.\opensrc\emWin\Config;.\opensrc\emWin\Demo;.\ui</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -861,6 +861,16 @@
               <FileName>rtos_mem.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\system\rtos_mem.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>ui</GroupName>
+          <Files>
+            <File>
+              <FileName>ui.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\ui\ui.c</FilePath>
             </File>
           </Files>
         </Group>
