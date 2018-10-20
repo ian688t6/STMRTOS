@@ -16,7 +16,7 @@
 #define LED1_STK_SIZE		(50)
 
 #define GUI_TASK_PRIO		(4)
-#define GUI_STK_SIZE		(512)
+#define GUI_STK_SIZE		(128)
 
 TaskHandle_t StartTask_Handler;
 TaskHandle_t LED0Task_Handler;
@@ -77,10 +77,9 @@ static void gui_task(void *pv_param)
 //	char acVersion[30] = "Version of STemWin: ";
 //	int  xCenter, xSize, ySize;
 	ui_init();
+	ui_mtouch_enable();
 	printf("gui_task ...\r\n");
-//	GUI_SetBkColor(GUI_BLUE);
-//	GUI_SetColor(GUI_WHITE);
-//	GUI_Clear();
+
 //	
 //	xSize   = LCD_GetXSize();
 //	ySize   = LCD_GetYSize();
@@ -94,14 +93,14 @@ static void gui_task(void *pv_param)
 
 	printf("gui_task 1...\r\n");
 	for (;;)
-	{
-			printf("gui_task 2...\r\n");
-//	GUI_SetBkColor(GUI_BLUE);
-//	GUI_SetColor(GUI_WHITE);
-//	GUI_Clear();
-//	GUIDEMO_Main();
+//	{
+//			printf("gui_task 2...\r\n");
+////	GUI_SetBkColor(GUI_BLUE);
+////	GUI_SetColor(GUI_WHITE);
+////	GUI_Clear();
+//		GUIDEMO_Main();
 		rtos_mdelay(500);
-	}
+//	}
 }
 
 static void start_task(void *pvParameters)
@@ -147,7 +146,7 @@ int main(void)
 
 	bsp_disp_init();
 	bsp_iic_init();
-	bsp_tp_init();
+//	bsp_tp_init(NULL);
 	led_init();
 	
 	xTaskCreate((TaskFunction_t)start_task,

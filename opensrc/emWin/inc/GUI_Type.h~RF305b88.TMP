@@ -605,7 +605,7 @@ typedef struct {
 
 typedef struct {
   int            LayerIndex;
-  unsigned int   NumPoints;
+  unsigned       NumPoints;
   GUI_TIMER_TIME TimeStamp;
   GUI_HMEM       hInput;
 } GUI_MTOUCH_EVENT;

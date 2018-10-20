@@ -14,23 +14,27 @@ static void task_tp_scan(void *pvParameters)
 {
 	bsp_tp_t *pst_tp = (bsp_tp_t *)pvParameters;
 	
+	memset(&pst_tp->st_sta, 0x0, sizeof(touch_panel_state_t));
 	pst_tp->st_sta.uc_tcont = 1;
+
 	for (;;)
 	{
-		printf("tp scan ...\r\n");
 		pst_tp->pst_bd_tp->scan(pst_tp->pst_iic, &pst_tp->st_sta);
+		if (NULL != pst_tp->pf_cb) {
+			pst_tp->pf_cb((void *)&pst_tp->st_sta);
+		}
 		rtos_mdelay(50);
 	}	
 }
 
-void bsp_tp_init(void)
+void bsp_tp_init(tp_sta_callback pf_cb)
 {
 	bsp_tp_t		*pst_tp		= &gst_tp;
 	board_t 		*pst_bd 	= board_get();
 	
 	pst_tp->pst_bd_tp 	= pst_bd->pf_touch_panel_get();
 	pst_tp->pst_iic 	= bsp_iic_register(pst_tp->pst_bd_tp->uc_dev);
-	
+	pst_tp->pf_cb		= pf_cb;
 	pst_tp->pst_bd_tp->init(pst_tp->pst_iic);
 	xTaskCreate((TaskFunction_t)task_tp_scan,
 				(const char *)"task_tp_scan",

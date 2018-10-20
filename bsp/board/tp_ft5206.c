@@ -64,6 +64,8 @@ static uint8_t tp_init(bsp_iic_t *pst_iic)
 	return 0;
 }
 
+#if 1
+
 static uint8_t tp_scan(bsp_iic_t *pst_iic, touch_panel_state_t *pst_sta)
 {
 	int32_t i = 0;
@@ -85,7 +87,7 @@ static uint8_t tp_scan(bsp_iic_t *pst_iic, touch_panel_state_t *pst_sta)
 		if (pst_sta->uc_tstat & 0x1F)
 		{
 			pst_sta->uc_tstat = 0;
-			printf("pen release x[%d]:%d,y[%d]:%d\r\n", i, pst_sta->aus_x[i], i, pst_sta->aus_y[i]);
+//			printf("pen release x[%d]:%d,y[%d]:%d\r\n", i, pst_sta->aus_x[i], i, pst_sta->aus_y[i]);
 		}
 		return 0;
 	}
@@ -97,24 +99,29 @@ static uint8_t tp_scan(bsp_iic_t *pst_iic, touch_panel_state_t *pst_sta)
 	
 	for (i = 0; i < pst_sta->uc_tcont; i ++)
 	{
+
 		if (pst_sta->uc_tstat & (0x01 << i))
-		{
+		{	
 			pst_iic->read(auc_tp_regs[i], auc_buf, sizeof(auc_buf));
 			pst_sta->aus_y[i] = ((uint16_t)(auc_buf[0] & 0X0F)<<8) | auc_buf[1];
 			pst_sta->aus_x[i] = ((uint16_t)(auc_buf[2] & 0X0F)<<8) | auc_buf[3];
 		}
-		
+
 		if((auc_buf[0] & 0XF0)!=0X80)
 		{
 			pst_sta->aus_x[i] = 0;
 			pst_sta->aus_y[i] = 0;		
+			return 0;
 		}
 		
-		printf("pen down x[%d]:%d,y[%d]:%d\r\n", i, pst_sta->aus_x[i], i, pst_sta->aus_y[i]);
+//		printf("pen down x[%d]:%d,y[%d]:%d\r\n", i, pst_sta->aus_x[i], i, pst_sta->aus_y[i]);
 	}
 	
 	return 0;
 }
+#else
+
+#endif
 
 static touch_panel_t gst_tp =
 {
