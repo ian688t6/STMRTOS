@@ -4,7 +4,21 @@
 
 static bsp_uart_s gast_uart[] = 
 {
-	{ USART1_BASE, USART1_IRQn, 115200, bsp_uart_out, NULL },
+	{ 
+			.ui_uart_base 	= USART1_BASE, 
+			.ui_irq 		= USART1_IRQn, 
+			.ui_baudrate	= 115200, 
+			.pf_out 		= bsp_uart_out, 
+			.pf_in			= NULL 
+	},
+
+	{ 
+			.ui_uart_base	= USART2_BASE, 
+			.ui_irq			= USART2_IRQn, 
+			.ui_baudrate 	= 115200, 
+			.pf_out 		= bsp_uart_out, 
+			.pf_in			= NULL 
+	},
 };
 
 static void uart_init(bsp_uart_s *pst_uart)
@@ -30,9 +44,20 @@ static void uart_init(bsp_uart_s *pst_uart)
 		break;
 		
 		case USART2_BASE:
-			
+			RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
+			RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+			USART_DeInit(USART2);
+
+			GPIO_InitStructure.GPIO_Pin	 	= GPIO_Pin_2;
+			GPIO_InitStructure.GPIO_Speed	= GPIO_Speed_50MHz;
+			GPIO_InitStructure.GPIO_Mode	= GPIO_Mode_AF_PP;
+			GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+			GPIO_InitStructure.GPIO_Pin		= GPIO_Pin_3;
+			GPIO_InitStructure.GPIO_Mode	= GPIO_Mode_IN_FLOATING;
+			GPIO_Init(GPIOA, &GPIO_InitStructure);
 		break;
-		
+	
 		case USART3_BASE:
 			
 		break;
@@ -59,10 +84,37 @@ static void uart_init(bsp_uart_s *pst_uart)
 	USART_Init((USART_TypeDef *)pst_uart->ui_uart_base, &USART_InitStructure); //初始化串口1
 	USART_ITConfig((USART_TypeDef *)pst_uart->ui_uart_base, USART_IT_RXNE, ENABLE);//开启串口接受中断
 	USART_Cmd((USART_TypeDef *)pst_uart->ui_uart_base, ENABLE);                    //使能串口1 
+	USART_GetFlagStatus((USART_TypeDef *)pst_uart->ui_uart_base, USART_FLAG_TC);
+	memset(&pst_uart->st_fifo, 0x0, sizeof(uart_fifo));
+	vSemaphoreCreateBinary(pst_uart->st_fifo.st_sem);
+	xSemaphoreTake(pst_uart->st_fifo.st_sem , portMAX_DELAY) ;
 }
 
 void USART1_IRQHandler(void)
 {	
+	return;
+}
+
+void USART2_IRQHandler(void)
+{
+	uint8_t uc_ch;
+	bsp_uart_s *pst_uart = &gast_uart[BSP_UART2];
+
+	if (RESET != USART_GetITStatus(USART2, USART_IT_RXNE))
+	{
+		uc_ch = USART_ReceiveData(USART2);
+		pst_uart->st_fifo.auc_buf[pst_uart->st_fifo.us_len ++] = uc_ch;
+		pst_uart->st_fifo.us_len = (pst_uart->st_fifo.us_len % BSP_UART_FIFO_LEN - 1);
+	}
+
+	if (SET == USART_GetITStatus(USART2, USART_IT_IDLE)) 
+	{
+		USART_ClearFlag(USART2, USART_FLAG_ORE);
+		USART_ReceiveData(USART2);
+		uc_ch = USART_ReceiveData(USART2);
+		xSemaphoreGive(pst_uart->st_fifo.st_sem);
+	}
+
 	return;
 }
 
@@ -90,12 +142,21 @@ int32_t bsp_uart_out(void *pv_arg, uint8_t uc_ch)
 	return uc_ch;	
 }
 
-int32_t bsp_uart_in(void *pv_arg, uint8_t uc_ch)
+int32_t bsp_uart_in(void *pv_arg, uint8_t **ppuc_buf)
 {
-	return 0;
+	bsp_uart_s *pst_uart = (bsp_uart_s *)pv_arg;
+	if (NULL == pst_uart)
+		return 0;
+	
+	USART_ITConfig((USART_TypeDef *)pst_uart->ui_uart_base, USART_IT_RXNE, DISABLE);// turn off usart rxen intr
+	xSemaphoreTake(pst_uart->st_fifo.st_sem , portMAX_DELAY);
+	*ppuc_buf = pst_uart->st_fifo.auc_buf;
+	USART_ITConfig((USART_TypeDef *)pst_uart->ui_uart_base, USART_IT_RXNE, ENABLE);// turn on usart rxen intr
+
+	return pst_uart->st_fifo.us_len;
 }
 
-bsp_uart_s *bsp_uart_fetch(uint32_t ui_uart_no)
+bsp_uart_s *bsp_uart_register(uint32_t ui_uart_no)
 {
 	if (ui_uart_no >= sizeof(gast_uart) / sizeof(bsp_uart_s))
 		return NULL;

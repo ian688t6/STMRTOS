@@ -29,7 +29,7 @@ int fputc(int ch, FILE *f)
 void rtos_console_init(void)
 {
 	rtos_console_s *pst_console = &gst_console;
-	bsp_uart_s *pst_uart = bsp_uart_fetch(BSP_UART1);
+	bsp_uart_s *pst_uart = bsp_uart_register(BSP_UART1);
 	if (NULL == pst_uart)
 		return;
 	
