@@ -1,7 +1,7 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
-#include "lcd_core.h"
+#include "board_lcd.h"
 #include "board_gpio.h"
 #include "board_tp.h"
 

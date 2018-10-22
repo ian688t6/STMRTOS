@@ -1,7 +1,7 @@
 #include "basic.h"
 #include "board.h"
 #include "rtos.h"
-#include "lcd_core.h"
+#include "board_lcd.h"
 #include "bsp_disp.h"
 
 #define	LCD_CS_SET  GPIOC->BSRR=1<<9    //Æ¬Ñ¡¶Ë¿Ú  		PC9
