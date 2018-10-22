@@ -677,6 +677,11 @@
               <FileType>1</FileType>
               <FilePath>.\bsp\board\tp_ft5206.c</FilePath>
             </File>
+            <File>
+              <FileName>wifi_esp8266.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\bsp\board\wifi_esp8266.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
