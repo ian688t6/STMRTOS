@@ -146,6 +146,7 @@ int main(void)
 
 	bsp_disp_init();
 	bsp_iic_init();
+	bsp_wifi_init();
 	led_init();
 	
 	xTaskCreate((TaskFunction_t)start_task,

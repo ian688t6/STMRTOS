@@ -657,6 +657,11 @@
               <FileType>1</FileType>
               <FilePath>.\bsp\bsp_tp.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_wifi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\bsp\bsp_wifi.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

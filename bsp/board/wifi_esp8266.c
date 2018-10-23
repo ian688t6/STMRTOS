@@ -116,21 +116,33 @@ static void esp8266_puts(char *Data, ...)
 				    break;
 			}		 
 		} /* end of else if */
-		else pst_mcu->pst_uart->pf_out(pst_mcu->pst_uart, *Data ++);
+		else  pst_mcu->pst_uart->pf_out(pst_mcu->pst_uart, *Data ++);
 		while( USART_GetFlagStatus((USART_TypeDef *)pst_mcu->pst_uart->ui_uart_base, USART_FLAG_TXE) == RESET );
 	}
 }
 
-static void esp8266_init(bsp_uart_s *pst_uart)
+static int32_t esp8266_gets(uint8_t **ppc_buf)
 {
 	wifi_mcu_t *pst_mcu = &gst_mcu;
-	
-	pst_mcu->pst_uart = pst_uart;
-	
-	return;
+	return pst_mcu->pst_uart->pf_in(pst_mcu->pst_uart, ppc_buf);
 }
 
-static int32_t esp8266_test(char *pc_cmd)
+static int32_t esp8266_init(bsp_uart_s *pst_uart)
+{
+	uint8_t *puc_resp = NULL;
+	wifi_mcu_t *pst_mcu = &gst_mcu;
+	pst_mcu->pst_uart = pst_uart;
+	
+	esp8266_puts("ATE0\r\n");
+	rtos_mdelay(3000);
+	esp8266_gets(&puc_resp);
+	if (strstr((char *)puc_resp, "OK"))
+		return 0;
+	
+	return -1;
+}
+
+static int32_t esp8266_test(char *pc_cmd, uint8_t **puc_resp, uint32_t ui_timeout)
 {
 	char ac_cmd[ESP_CMDBUF_SIZE] = {0};
 	wifi_mcu_t *pst_mcu = &gst_mcu;
@@ -140,16 +152,17 @@ static int32_t esp8266_test(char *pc_cmd)
 	if (pc_cmd)
 		snprintf(ac_cmd, ESP_CMDBUF_SIZE, "AT+%s=?\r\n", pc_cmd);
 	else
-		strcpy(ac_cmd, "AT");
-
+		strcpy(ac_cmd, "AT\r\n");
 	esp8266_puts(ac_cmd);
-	
+	rtos_mdelay(ui_timeout);
 	/* Todo: recv resp */
-
+	esp8266_gets(puc_resp);
+	if ((NULL == puc_resp))
+		return -1;
 	return 0;
 }
 
-static int32_t esp8266_qury(char *pc_cmd)
+static int32_t esp8266_qury(char *pc_cmd, uint8_t **puc_resp, uint32_t ui_timeout)
 {
 	char ac_cmd[ESP_CMDBUF_SIZE] = {0};
 	wifi_mcu_t *pst_mcu = &gst_mcu;
@@ -159,13 +172,18 @@ static int32_t esp8266_qury(char *pc_cmd)
 	/* Todo: send cmd */
 	snprintf(ac_cmd, ESP_CMDBUF_SIZE, "AT+%s?\r\n", pc_cmd);
 	esp8266_puts(ac_cmd);
-		
+	
+	rtos_mdelay(ui_timeout);	
+	
 	/* Todo: recv resp */
-
+	esp8266_gets(puc_resp);
+	if (NULL == puc_resp)
+		return -1;
+	
 	return 0;
 }
 
-static int32_t esp8266_conf(char *pc_cmd, char *pc_args)
+static int32_t esp8266_conf(char *pc_cmd, char *pc_args, uint8_t **puc_resp, uint32_t ui_timeout)
 {
 	char ac_cmd[ESP_CMDBUF_SIZE] = {0};
 	wifi_mcu_t *pst_mcu = &gst_mcu;
@@ -175,13 +193,18 @@ static int32_t esp8266_conf(char *pc_cmd, char *pc_args)
 	/* Todo: send cmd */
 	snprintf(ac_cmd, ESP_CMDBUF_SIZE, "AT+%s=%s\r\n", pc_cmd, pc_args);
 	esp8266_puts(ac_cmd);
+
+	rtos_mdelay(ui_timeout);	
 	
 	/* Todo: recv resp */
+	esp8266_gets(puc_resp);
+	if (NULL == puc_resp)
+		return -1;
 
 	return 0;
 }
 
-static int32_t esp8266_exec(char *pc_cmd)
+static int32_t esp8266_exec(char *pc_cmd, uint8_t **puc_resp, uint32_t ui_timeout)
 {
 	char ac_cmd[ESP_CMDBUF_SIZE] = {0};
 	wifi_mcu_t *pst_mcu = &gst_mcu;
@@ -192,8 +215,13 @@ static int32_t esp8266_exec(char *pc_cmd)
 	snprintf(ac_cmd, ESP_CMDBUF_SIZE, "AT+%s\r\n", pc_cmd);
 	esp8266_puts(ac_cmd);
 
+	rtos_mdelay(ui_timeout);	
+
 	/* Todo: recv resp */
-	
+	esp8266_gets(puc_resp);
+	if (NULL == puc_resp)
+		return -1;
+
 	return 0;
 }
 

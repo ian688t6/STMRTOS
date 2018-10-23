@@ -6,5 +6,6 @@
 #include "bsp_uart.h"
 #include "bsp_iic.h"
 #include "bsp_tp.h"
+#include "bsp_wifi.h"
 
 #endif

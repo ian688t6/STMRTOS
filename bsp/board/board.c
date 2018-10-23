@@ -10,6 +10,7 @@ static board_t gst_board_mini_stm32 =
 	},
 	.pf_lcd_panel_get 	= lcd_panel_get,
 	.pf_touch_panel_get = touch_panel_get,
+	.pf_wifi_mcu_get	= wifi_mcu_get,
 };
 
 board_t *board_get(void)
