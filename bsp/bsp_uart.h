@@ -11,13 +11,13 @@ typedef enum
 	BSP_UART3,	
 } uart_num_e;
 
-#define BSP_UART_FIFO_LEN		(128)
+#define BSP_UART_FIFO_LEN		(256)
 
 typedef struct
 {
 	SemaphoreHandle_t 	st_sem;
 	uint8_t 			auc_buf[BSP_UART_FIFO_LEN];
-	uint16_t			us_len;
+	__IO uint16_t		us_len;
 } uart_fifo;
 
 typedef int32_t (*uart_out)(void *pv_priv, uint8_t uc_ch);

@@ -18,10 +18,15 @@
 #define GUI_TASK_PRIO		(4)
 #define GUI_STK_SIZE		(128)
 
+#define NETWORK_TASK_PRIO	(7)
+#define NETWORK_STK_SIZE	(128)
+
+
 TaskHandle_t StartTask_Handler;
 TaskHandle_t LED0Task_Handler;
 TaskHandle_t LED1Task_Handler;
 TaskHandle_t GUITask_Handler;
+TaskHandle_t NETWORKTask_Handler;
 
 static void led_init(void)
 {
@@ -72,6 +77,44 @@ static void led1_task(void *pvParameters)
 #define FACTOR_LOGO        38
 #define FACTOR_WWW         56
 
+static void network_task(void *pv_param)
+{
+	wifi_ssid_s 	*pst_ssid 	= NULL;
+	wifi_ifaddr_s 	*pst_ifaddr = NULL;
+
+	/* Todo: set wifi workmode: sta + ap */
+	bsp_wifi_ioctl(IOCTL_WIFI_SET_MODE, WIFI_MODE_STA_AP, strlen(WIFI_MODE_STA_AP) + 1);
+	
+	/* Todo: join wifi ap */
+	pst_ssid = (wifi_ssid_s *)pvPortMalloc(sizeof(wifi_ssid_s));
+	if (NULL == pst_ssid)
+	{
+		return;
+	}
+	strncpy(pst_ssid->ac_ssidname, "ruifeng1", sizeof(pst_ssid->ac_ssidname));
+	strncpy(pst_ssid->ac_password, "88888888", sizeof(pst_ssid->ac_password));
+	bsp_wifi_ioctl(IOCTL_WIFI_JOIN_AP, pst_ssid, sizeof(wifi_ssid_s));
+	vPortFree(pst_ssid);
+	
+	/* Todo: query wifi ifaddr*/
+	pst_ifaddr = (wifi_ifaddr_s *)pvPortMalloc(sizeof(wifi_ifaddr_s));
+	if (NULL == pst_ifaddr)
+	{
+		return;
+	}
+	bsp_wifi_ioctl(IOCTL_WIFI_GET_IFADDR, pst_ifaddr, sizeof(wifi_ifaddr_s));
+	printf("APaddr: %s APmac: %s STAaddr: %s STAmac: %s\r\n", 
+			pst_ifaddr->ac_ap_addr, pst_ifaddr->ac_ap_mac,
+			pst_ifaddr->ac_sta_addr, pst_ifaddr->ac_sta_mac);
+	vPortFree(pst_ifaddr);
+	
+	for (;;)
+	{
+		printf("network task ...\r\n");
+		rtos_mdelay(1000);
+	}
+}
+
 static void gui_task(void *pv_param)
 {
 //	char acVersion[30] = "Version of STemWin: ";
@@ -93,14 +136,14 @@ static void gui_task(void *pv_param)
 
 	printf("gui_task 1...\r\n");
 	for (;;)
-//	{
+	{
 //			printf("gui_task 2...\r\n");
 ////	GUI_SetBkColor(GUI_BLUE);
 ////	GUI_SetColor(GUI_WHITE);
 ////	GUI_Clear();
 //		GUIDEMO_Main();
 		rtos_mdelay(500);
-//	}
+	}
 }
 
 static void start_task(void *pvParameters)
@@ -126,7 +169,15 @@ static void start_task(void *pvParameters)
 				(void *)NULL,
 				(UBaseType_t)GUI_TASK_PRIO,
 				(TaskHandle_t *)&GUITask_Handler);
-#endif	
+#endif
+
+	xTaskCreate((TaskFunction_t)network_task,
+				(const char *)"network_task",
+				(uint16_t)NETWORK_STK_SIZE,
+				(void *)NULL,
+				(UBaseType_t)NETWORK_TASK_PRIO,
+				(TaskHandle_t *)&NETWORKTask_Handler);
+				
 	vTaskDelete(StartTask_Handler);
 	taskEXIT_CRITICAL();
 }

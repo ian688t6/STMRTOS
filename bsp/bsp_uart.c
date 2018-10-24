@@ -82,7 +82,7 @@ static void uart_init(bsp_uart_s *pst_uart)
 	USART_InitStructure.USART_Mode 							= USART_Mode_Rx | USART_Mode_Tx;	//收发模式
 
 	USART_Init((USART_TypeDef *)pst_uart->ui_uart_base, &USART_InitStructure); //初始化串口1
-	USART_ITConfig((USART_TypeDef *)pst_uart->ui_uart_base, USART_IT_RXNE | USART_IT_IDLE, ENABLE);//开启串口接受中断
+	USART_ITConfig((USART_TypeDef *)pst_uart->ui_uart_base, USART_IT_RXNE, ENABLE);//开启串口接受中断
 	USART_Cmd((USART_TypeDef *)pst_uart->ui_uart_base, ENABLE);                    //使能串口1 
 	USART_GetFlagStatus((USART_TypeDef *)pst_uart->ui_uart_base, USART_FLAG_TC);
 
@@ -115,23 +115,23 @@ void USART1_IRQHandler(void)
 
 void USART2_IRQHandler(void)
 {
-	uint8_t uc_ch;
+//	uint8_t uc_ch;
 	bsp_uart_s *pst_uart = &gast_uart[BSP_UART2];
 	
 	if (RESET != USART_GetITStatus(USART2, USART_IT_RXNE))
 	{
 //		USART_ClearITPendingBit(USART2,USART_IT_RXNE); //清除中断标志.		
-		uc_ch = USART_ReceiveData(USART2);
-		pst_uart->st_fifo.auc_buf[pst_uart->st_fifo.us_len ++] = uc_ch;
+//		printf("+");
+		pst_uart->st_fifo.auc_buf[pst_uart->st_fifo.us_len ++] = USART_ReceiveData(USART2);
 		pst_uart->st_fifo.us_len = pst_uart->st_fifo.us_len % (BSP_UART_FIFO_LEN - 1);
 	}
 
-	if ( USART_GetITStatus( USART2, USART_IT_IDLE ) == SET )                                         //数据帧接收完毕
-	{
-		USART_ClearFlag(USART3,USART_FLAG_ORE);  //读SR 
-		USART_ReceiveData(USART3); //读DR 
-		uc_ch = USART_ReceiveData( USART3 );                                                              //由软件序列清除中断标志位(先读USART_SR，然后读USART_DR)
-    }  
+//	if ( USART_GetITStatus( USART2, USART_IT_IDLE ) == SET )                                         //数据帧接收完毕
+//	{
+//		USART_ClearFlag(USART3,USART_FLAG_ORE);  //读SR 
+//		USART_ReceiveData(USART3); //读DR 
+//		uc_ch = USART_ReceiveData( USART3 );                                                              //由软件序列清除中断标志位(先读USART_SR，然后读USART_DR)
+//    }  
 	
 	return;
 }

@@ -134,7 +134,7 @@ static int32_t esp8266_init(bsp_uart_s *pst_uart)
 	pst_mcu->pst_uart = pst_uart;
 	
 	esp8266_puts("ATE0\r\n");
-	rtos_mdelay(3000);
+	rtos_xdelay(3000);
 	esp8266_gets(&puc_resp);
 	if (strstr((char *)puc_resp, "OK"))
 		return 0;
@@ -142,7 +142,7 @@ static int32_t esp8266_init(bsp_uart_s *pst_uart)
 	return -1;
 }
 
-static int32_t esp8266_test(char *pc_cmd, uint8_t **puc_resp, uint32_t ui_timeout)
+static int32_t esp8266_test(const char *pc_cmd, uint8_t **puc_resp, uint32_t ui_timeout)
 {
 	char ac_cmd[ESP_CMDBUF_SIZE] = {0};
 	wifi_mcu_t *pst_mcu = &gst_mcu;
@@ -162,7 +162,7 @@ static int32_t esp8266_test(char *pc_cmd, uint8_t **puc_resp, uint32_t ui_timeou
 	return 0;
 }
 
-static int32_t esp8266_qury(char *pc_cmd, uint8_t **puc_resp, uint32_t ui_timeout)
+static int32_t esp8266_qury(const char *pc_cmd, uint8_t **puc_resp, uint32_t ui_timeout)
 {
 	char ac_cmd[ESP_CMDBUF_SIZE] = {0};
 	wifi_mcu_t *pst_mcu = &gst_mcu;
@@ -183,7 +183,7 @@ static int32_t esp8266_qury(char *pc_cmd, uint8_t **puc_resp, uint32_t ui_timeou
 	return 0;
 }
 
-static int32_t esp8266_conf(char *pc_cmd, char *pc_args, uint8_t **puc_resp, uint32_t ui_timeout)
+static int32_t esp8266_conf(const char *pc_cmd, char *pc_args, uint8_t **puc_resp, uint32_t ui_timeout)
 {
 	char ac_cmd[ESP_CMDBUF_SIZE] = {0};
 	wifi_mcu_t *pst_mcu = &gst_mcu;
@@ -204,7 +204,7 @@ static int32_t esp8266_conf(char *pc_cmd, char *pc_args, uint8_t **puc_resp, uin
 	return 0;
 }
 
-static int32_t esp8266_exec(char *pc_cmd, uint8_t **puc_resp, uint32_t ui_timeout)
+static int32_t esp8266_exec(const char *pc_cmd, uint8_t **puc_resp, uint32_t ui_timeout)
 {
 	char ac_cmd[ESP_CMDBUF_SIZE] = {0};
 	wifi_mcu_t *pst_mcu = &gst_mcu;
