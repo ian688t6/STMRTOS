@@ -192,6 +192,7 @@ static int32_t esp8266_conf(const char *pc_cmd, char *pc_args, uint8_t **puc_res
 
 	/* Todo: send cmd */
 	snprintf(ac_cmd, ESP_CMDBUF_SIZE, "AT+%s=%s\r\n", pc_cmd, pc_args);
+	printf("ESP8266 CMD:%s", ac_cmd);
 	esp8266_puts(ac_cmd);
 
 	rtos_mdelay(ui_timeout);	

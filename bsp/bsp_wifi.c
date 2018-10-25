@@ -44,6 +44,9 @@ static void parse_cifsr(char *pc_cifsr, const char *pc_key, char *pc_buf)
 	char *pc_tmp = NULL;
 	
 	pc_tmp = strstr(pc_cifsr, pc_key);
+	if (NULL == pc_tmp)
+		return;
+	
 	pc_tmp += strlen(pc_key);
 	/* skip token " */
 	pc_tmp ++;
@@ -82,12 +85,15 @@ static void conn_tcp(char *pc_addr, uint32_t ui_port)
 	char ac_arg[128] = {0};
 	
 	snprintf(ac_arg, sizeof(ac_arg), "\"TCP\",\"%s\",%d", pc_addr, ui_port);
-	pmcu->conf("CIPSTART", ac_arg, &puc_resp, 3000);
-	if (!CHECK_ACK(puc_resp)) {
-		printf("AT+CIPSTART TCP failed! %s\r\n", (char *)puc_resp);
-		return;
-	}
-	
+	do {
+		pmcu->conf("CIPSTART", ac_arg, &puc_resp, 5000);
+		printf("conn_tcp resp: %s", (char *)puc_resp);
+	} while (!CHECK_ACK(puc_resp) && !strstr((char *)puc_resp, "ALREADY CONNECTED"));
+//	if (!CHECK_ACK(puc_resp)) {
+//		printf("AT+CIPSTART TCP failed! %s\r\n", (char *)puc_resp);
+//		return;
+//	}
+
 	return;
 }
 
@@ -146,6 +152,21 @@ static int32_t wifi_connect(wifi_conn_s *pst_conn)
 	
 	return i_ret;
 }
+
+static int32_t wifi_set_txmode(uint32_t ui_mode)
+{
+	int32_t i_ret = 0;
+	uint8_t *puc_resp = NULL;
+	
+	i_ret = ui_mode == 0 ? 
+		pmcu->conf("CIPMODE", "0", &puc_resp, 100) : pmcu->conf("CIPMODE", "1", &puc_resp, 100);
+	if (!CHECK_ACK(puc_resp)) {
+		printf("AT+CIPSTART UDP failed! %s\r\n", (char *)puc_resp);
+		i_ret = -1;
+	}
+	
+	return i_ret;
+}
 		
 void bsp_wifi_init(void)
 {
@@ -193,6 +214,10 @@ int32_t bsp_wifi_ioctl(uint32_t ui_ioctl_cmd, void *pv_arg, uint32_t ui_size)
 		
 		case IOCTL_WIFI_CONNECT:
 			i_ret = wifi_connect((wifi_conn_s *)pv_arg);
+		break;
+		
+		case IOCTL_WIFI_SET_TXMODE:
+			i_ret = wifi_set_txmode(*(uint32_t *)pv_arg);
 		break;
 		
 		default:

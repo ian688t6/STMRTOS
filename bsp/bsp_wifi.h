@@ -11,6 +11,7 @@ enum
 	IOCTL_WIFI_JOIN_AP		= 2,
 	IOCTL_WIFI_GET_IFADDR 	= 3,
 	IOCTL_WIFI_CONNECT		= 4,
+	IOCTL_WIFI_SET_TXMODE	= 5,
 };
 
 typedef struct

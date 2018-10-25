@@ -81,7 +81,8 @@ static void network_task(void *pv_param)
 {
 	wifi_ssid_s 	*pst_ssid 	= NULL;
 	wifi_ifaddr_s 	*pst_ifaddr = NULL;
-
+	wifi_conn_s		*pst_conn	= NULL;
+	
 	/* Todo: set wifi workmode: sta + ap */
 	bsp_wifi_ioctl(IOCTL_WIFI_SET_MODE, WIFI_MODE_STA_AP, strlen(WIFI_MODE_STA_AP) + 1);
 	
@@ -107,6 +108,18 @@ static void network_task(void *pv_param)
 			pst_ifaddr->ac_ap_addr, pst_ifaddr->ac_ap_mac,
 			pst_ifaddr->ac_sta_addr, pst_ifaddr->ac_sta_mac);
 	vPortFree(pst_ifaddr);
+	
+	pst_conn = (wifi_conn_s *)pvPortMalloc(sizeof(wifi_conn_s));
+	if (NULL == pst_conn)
+	{
+		return;
+	}
+	pst_conn->ui_mux = 0;
+	strncpy(pst_conn->ac_type, "TCP", sizeof(pst_conn->ac_type));
+	strncpy(pst_conn->ac_addr, "192.168.1.101", sizeof(pst_conn->ac_addr));
+	pst_conn->ui_rmt_port = 9120;
+	bsp_wifi_ioctl(IOCTL_WIFI_CONNECT, pst_conn, sizeof(wifi_conn_s));
+	vPortFree(pst_conn);
 	
 	for (;;)
 	{
