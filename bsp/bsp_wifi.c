@@ -27,14 +27,20 @@ static int32_t wifi_set_mode(char *pc_mode)
 static int32_t wifi_join_ap(wifi_ssid_s *pst_ssid)
 {
 	uint8_t *puc_resp 	= NULL;
-	char ac_arg[128] 	= {0};
+	char *pc_arg = NULL;
 	
-	snprintf(ac_arg, sizeof(ac_arg), "\"%s\",\"%s\"", pst_ssid->ac_ssidname, pst_ssid->ac_password);
+	pc_arg = (char *)pvPortMalloc(128);
+	if (NULL == pc_arg)
+		return -1;
+	memset(pc_arg, 0x0, 128);
+	snprintf(pc_arg, 128, "\"%s\",\"%s\"", pst_ssid->ac_ssidname, pst_ssid->ac_password);
 	
 	do {
-		pmcu->conf("CWJAP", ac_arg, &puc_resp, 3000);
-		printf("AT+CWJAP=%s RESP:%s", ac_arg, (char *)puc_resp);
+		pmcu->conf("CWJAP", pc_arg, &puc_resp, 3000);
+		printf("AT+CWJAP=%s RESP:%s", pc_arg, (char *)puc_resp);
 	} while (!strstr((char *)puc_resp, "WIFI GOT IP"));
+	
+	vPortFree(pc_arg);
 	
 	return 0;
 }
@@ -82,18 +88,19 @@ static int32_t wifi_get_ifaddr(wifi_ifaddr_s *pst_ifaddr)
 static void conn_tcp(char *pc_addr, uint32_t ui_port)
 {
 	uint8_t *puc_resp = NULL;
-	char ac_arg[128] = {0};
+	char* pc_arg = NULL;
 	
-	snprintf(ac_arg, sizeof(ac_arg), "\"TCP\",\"%s\",%d", pc_addr, ui_port);
+	pc_arg = (char *)pvPortMalloc(128);
+	if (NULL == pc_arg)
+		return ;
+	memset(pc_arg, 0x0, 128);
+	snprintf(pc_arg, 128, "\"TCP\",\"%s\",%d", pc_addr, ui_port);
 	do {
-		pmcu->conf("CIPSTART", ac_arg, &puc_resp, 5000);
+		pmcu->conf("CIPSTART", pc_arg, &puc_resp, 3000);
 		printf("conn_tcp resp: %s", (char *)puc_resp);
 	} while (!CHECK_ACK(puc_resp) && !strstr((char *)puc_resp, "ALREADY CONNECTED"));
-//	if (!CHECK_ACK(puc_resp)) {
-//		printf("AT+CIPSTART TCP failed! %s\r\n", (char *)puc_resp);
-//		return;
-//	}
-
+	vPortFree(pc_arg);
+	
 	return;
 }
 
@@ -101,20 +108,27 @@ static void conn_udp(uint32_t ui_mux, uint32_t ui_id,
 	char *pc_addr, uint32_t ui_rmt_port, uint32_t ui_loc_port, uint32_t ui_mode)
 {
 	uint8_t *puc_resp = NULL;
-	char ac_arg[128] = {0};
+	char* pc_arg = NULL;
+	
+	pc_arg = (char *)pvPortMalloc(128);
+	if (NULL == pc_arg)
+		return ;
+	memset(pc_arg, 0x0, 128);
 
 	if (ui_mux)
-		snprintf(ac_arg, sizeof(ac_arg), "%d,\"UDP\",\"%s\",%d,%d,%d", 
+		snprintf(pc_arg, 128, "%d,\"UDP\",\"%s\",%d,%d,%d", 
 			ui_id, pc_addr, ui_rmt_port, ui_loc_port, ui_mode);
 	else
-		snprintf(ac_arg, sizeof(ac_arg), "\"UDP\",\"%s\",%d,%d,%d", 
+		snprintf(pc_arg, 128, "\"UDP\",\"%s\",%d,%d,%d", 
 			pc_addr, ui_rmt_port, ui_loc_port, ui_mode);
 
-	pmcu->conf("CIPSTART", ac_arg, &puc_resp, 3000);
+	pmcu->conf("CIPSTART", pc_arg, &puc_resp, 3000);
 	if (!CHECK_ACK(puc_resp)) {
 		printf("AT+CIPSTART UDP failed! %s\r\n", (char *)puc_resp);
+		vPortFree(pc_arg);
 		return;
 	}
+	vPortFree(pc_arg);
 	
 	return;
 }
@@ -167,7 +181,64 @@ static int32_t wifi_set_txmode(uint32_t ui_mode)
 	
 	return i_ret;
 }
-		
+
+static int32_t wifi_begin_passthrough(void)
+{
+	uint8_t *puc_resp = NULL;
+	
+	pmcu->exec("CIPSEND", &puc_resp, 500);
+	if (CHECK_ACK(puc_resp) && strstr((char *)puc_resp, ">"))
+	{
+		return 0;
+	}
+	
+	return -1;
+}
+
+static int32_t wifi_tx_passthrough(char *pc_data)
+{
+	pmcu->puts(pc_data);
+	return 0;	
+}
+
+static int32_t wifi_end_passthrough(void)
+{
+	pmcu->puts("+++");
+	return 0;
+}
+
+static int32_t wifi_tx(char *pc_data)
+{
+	int32_t i_len = 0;
+	uint8_t *puc_resp = NULL;
+	char ac_arg[32] = {0};
+	
+	if (NULL == pc_data)
+		return -1;
+	
+	i_len = strlen(pc_data);
+	if (i_len == 0)
+		return -1;
+	
+	do {
+		snprintf(ac_arg, sizeof(ac_arg), "%d", i_len);
+		pmcu->conf("CIPSEND", ac_arg, &puc_resp, 500);
+	} while (!CHECK_ACK(puc_resp) || !strstr((char *)puc_resp, ">"));
+	
+	if (CHECK_ACK(puc_resp) && strstr((char *)puc_resp, ">"))
+	{
+		pmcu->puts(pc_data);
+		rtos_mdelay(500);
+		pmcu->gets(&puc_resp);
+		if (strstr((char *)puc_resp, "SEND OK"))
+			return 0;
+		return -1;
+	}
+	printf("wifi_tx resp: %s", (char *)puc_resp);
+	
+	return -1;
+}
+
 void bsp_wifi_init(void)
 {
 	int32_t i_ret = 0;
@@ -218,6 +289,22 @@ int32_t bsp_wifi_ioctl(uint32_t ui_ioctl_cmd, void *pv_arg, uint32_t ui_size)
 		
 		case IOCTL_WIFI_SET_TXMODE:
 			i_ret = wifi_set_txmode(*(uint32_t *)pv_arg);
+		break;
+		
+		case IOCTL_WIFI_BEGIN_PASSTHROUGH:
+			i_ret = wifi_begin_passthrough();
+		break;
+
+		case IOCTL_WIFI_TX_PASSTHROUGH:
+			i_ret = wifi_tx_passthrough((char *)pv_arg);
+		break;
+		
+		case IOCTL_WIFI_END_PASSTHROUGH:
+			i_ret = wifi_end_passthrough();
+		break;
+		
+		case IOCTL_WIFI_TX:
+			i_ret = wifi_tx((char *)pv_arg);
 		break;
 		
 		default:

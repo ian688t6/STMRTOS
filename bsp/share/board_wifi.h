@@ -10,6 +10,8 @@ typedef struct
 	int32_t (*qury)(const char *pc_cmd, uint8_t **puc_resp, uint32_t ui_timeout);
 	int32_t (*conf)(const char *pc_cmd, char *pc_args, uint8_t **puc_resp, uint32_t ui_timeout);
 	int32_t (*exec)(const char *pc_cmd, uint8_t **puc_resp, uint32_t ui_timeout);
+	void (*puts)(char *pc_data, ...);
+	int32_t (*gets)(uint8_t **ppc_buf);
 } wifi_mcu_t;
 
 extern wifi_mcu_t *wifi_mcu_get(void);
