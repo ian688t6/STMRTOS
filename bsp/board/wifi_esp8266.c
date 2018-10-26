@@ -154,10 +154,14 @@ static int32_t esp8266_test(const char *pc_cmd, uint8_t **puc_resp, uint32_t ui_
 		strcpy(ac_cmd, "AT\r\n");
 	esp8266_puts(ac_cmd);
 	rtos_mdelay(ui_timeout);
+
 	/* Todo: recv resp */
-	esp8266_gets(puc_resp);
-	if ((NULL == puc_resp))
-		return -1;
+	if (ui_timeout) {
+		esp8266_gets(puc_resp);
+		if ((NULL == puc_resp))
+			return -1;	
+	}
+	
 	return 0;
 }
 
@@ -172,9 +176,11 @@ static int32_t esp8266_qury(const char *pc_cmd, uint8_t **puc_resp, uint32_t ui_
 	rtos_mdelay(ui_timeout);	
 	
 	/* Todo: recv resp */
-	esp8266_gets(puc_resp);
-	if (NULL == puc_resp)
-		return -1;
+	if (ui_timeout) {
+		esp8266_gets(puc_resp);
+		if (NULL == puc_resp)
+			return -1;
+	}
 	
 	return 0;
 }
@@ -191,9 +197,11 @@ static int32_t esp8266_conf(const char *pc_cmd, char *pc_args, uint8_t **puc_res
 	rtos_mdelay(ui_timeout);	
 	
 	/* Todo: recv resp */
-	esp8266_gets(puc_resp);
-	if (NULL == puc_resp)
-		return -1;
+	if (ui_timeout) {
+		esp8266_gets(puc_resp);
+		if (NULL == puc_resp)
+			return -1;	
+	}
 
 	return 0;
 }
@@ -209,9 +217,11 @@ static int32_t esp8266_exec(const char *pc_cmd, uint8_t **puc_resp, uint32_t ui_
 	rtos_mdelay(ui_timeout);	
 
 	/* Todo: recv resp */
-	esp8266_gets(puc_resp);
-	if (NULL == puc_resp)
-		return -1;
+	if (ui_timeout) {
+		esp8266_gets(puc_resp);
+		if (NULL == puc_resp)
+			return -1;
+	}
 
 	return 0;
 }
