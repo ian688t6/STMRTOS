@@ -662,6 +662,11 @@
               <FileType>1</FileType>
               <FilePath>.\bsp\bsp_wifi.c</FilePath>
             </File>
+            <File>
+              <FileName>at.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\bsp\share\at.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

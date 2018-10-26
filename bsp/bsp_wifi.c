@@ -339,6 +339,7 @@ static void task_wifi_resp(void *pv_param)
 //		printf("wifi_resp %s\r\n", (char *)puc_resp);
 		if (strstr((char *)puc_resp, "OK") || strstr((char *)puc_resp, "ERROR") || 
 			strstr((char *)puc_resp, "FAIL")) {
+			
 			memcpy(pst_ctx->ac_resp, puc_resp, sizeof(pst_ctx->ac_resp));
 			pst_ctx->pst_mcu->pst_uart->st_fifo.us_len = 0;
 			pst_ctx->pst_mcu->pst_uart->st_fifo.auc_buf[pst_ctx->pst_mcu->pst_uart->st_fifo.us_len] = '\0';
@@ -372,7 +373,7 @@ void bsp_wifi_init(void)
 			(void *)pst_ctx,
 			(UBaseType_t)TASK_WIFI_LISTEN_PRIO,
 			(TaskHandle_t *)&pst_ctx->st_handle);
-	 
+	 						
 	pst_ctx->pst_mcu->test(NULL, &puc_resp, 500);
 	printf("at test get resp %s", (char *)puc_resp);
 	if (!CHECK_ACK(puc_resp)) {
