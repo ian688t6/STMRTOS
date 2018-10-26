@@ -667,6 +667,11 @@
               <FileType>1</FileType>
               <FilePath>.\bsp\share\at.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_bt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\bsp\bsp_bt.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -691,6 +696,11 @@
               <FileName>wifi_esp8266.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\bsp\board\wifi_esp8266.c</FilePath>
+            </File>
+            <File>
+              <FileName>bt_hc05.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\bsp\board\bt_hc05.c</FilePath>
             </File>
           </Files>
         </Group>
