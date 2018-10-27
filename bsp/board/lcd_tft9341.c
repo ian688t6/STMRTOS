@@ -1,5 +1,5 @@
 #include "basic.h"
-#include "lcd_core.h"
+#include "board_lcd.h"
 
 static uint8_t gauc_lcdon_cmd0[] = 
 {
