@@ -83,7 +83,50 @@ static void uart_init(bsp_uart_s *pst_uart)
 		break;
 	
 		case USART3_BASE:
+			RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
+			RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+			/* 配置UART3 TX GPIO PB10 */
+			GPIO_InitStructure.GPIO_Pin 	= GPIO_Pin_10; 		//PB.10
+			GPIO_InitStructure.GPIO_Speed 	= GPIO_Speed_50MHz;
+			GPIO_InitStructure.GPIO_Mode 	= GPIO_Mode_AF_PP;	//复用推挽输出
+			GPIO_Init(GPIOB, &GPIO_InitStructure);			//初始化GPIOC.10
 			
+			/* 配置UART3 RX GPIO PB11 */
+			GPIO_InitStructure.GPIO_Pin 	= GPIO_Pin_11; 		//PB.11
+			GPIO_InitStructure.GPIO_Mode 	= GPIO_Mode_IN_FLOATING; //浮空输入
+			GPIO_Init(GPIOB, &GPIO_InitStructure);			//初始化GPIOB.11
+		break;
+
+		case UART4_BASE:
+			RCC_APB1PeriphClockCmd(RCC_APB1Periph_UART4, ENABLE);
+			RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+			/* 配置UART4 TX GPIO PC10 */
+			GPIO_InitStructure.GPIO_Pin 	= GPIO_Pin_10; 		//PC.10
+			GPIO_InitStructure.GPIO_Speed 	= GPIO_Speed_50MHz;
+			GPIO_InitStructure.GPIO_Mode 	= GPIO_Mode_AF_PP;	//复用推挽输出
+			GPIO_Init(GPIOC, &GPIO_InitStructure);			//初始化GPIOC.10
+		
+			/* 配置UART4 RX GPIO PC11 */
+			GPIO_InitStructure.GPIO_Pin 	= GPIO_Pin_11; 		//PC.11
+			GPIO_InitStructure.GPIO_Mode 	= GPIO_Mode_IN_FLOATING; //浮空输入
+			GPIO_Init(GPIOC, &GPIO_InitStructure);			//初始化GPIOC.11
+		break;
+		
+		case UART5_BASE:
+			/* 使能UART5 */
+			RCC_APB1PeriphClockCmd(RCC_APB1Periph_UART5, ENABLE);
+			RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD | RCC_APB2Periph_GPIOC, ENABLE);
+		
+			/* 配置UART5 TX GPIO PC10 */
+			GPIO_InitStructure.GPIO_Pin 	= GPIO_Pin_12; 		//PC.12
+			GPIO_InitStructure.GPIO_Speed 	= GPIO_Speed_50MHz;
+			GPIO_InitStructure.GPIO_Mode 	= GPIO_Mode_AF_PP;	//复用推挽输出
+			GPIO_Init(GPIOC, &GPIO_InitStructure);			//初始化GPIOC.12
+
+			/* 配置UART5 RX GPIO PD2 */
+			GPIO_InitStructure.GPIO_Pin 	= GPIO_Pin_2; 		//PD.2
+			GPIO_InitStructure.GPIO_Mode 	= GPIO_Mode_IN_FLOATING; //浮空输入
+			GPIO_Init(GPIOD, &GPIO_InitStructure);			//初始化GPIOD.2
 		break;
 		
 		default:
@@ -157,6 +200,60 @@ void USART2_IRQHandler(void)
 //		uc_ch = USART_ReceiveData( USART3 );                                                              //由软件序列清除中断标志位(先读USART_SR，然后读USART_DR)
 //  }
 	
+	return;
+}
+
+void USART3_IRQHandler(void)
+{
+//	uint8_t uc_ch;
+	bsp_uart_s *pst_uart = &gast_uart[BSP_UART3];
+	
+	if (RESET != USART_GetITStatus(USART3, USART_IT_RXNE))
+	{
+//		USART_ClearITPendingBit(USART2,USART_IT_RXNE); //清除中断标志.		
+//		printf("+");
+		pst_uart->st_fifo.auc_buf[pst_uart->st_fifo.us_len ++] = USART_ReceiveData(USART3);
+		pst_uart->st_fifo.us_len = pst_uart->st_fifo.us_len % (BSP_UART_FIFO_LEN - 1);
+	}
+
+//	if ( USART_GetITStatus( USART2, USART_IT_IDLE ) == SET )                                         //数据帧接收完毕
+//	{
+//		USART_ClearFlag(USART3,USART_FLAG_ORE);  //读SR 
+//		USART_ReceiveData(USART3); //读DR 
+//		uc_ch = USART_ReceiveData( USART3 );                                                              //由软件序列清除中断标志位(先读USART_SR，然后读USART_DR)
+//  }
+	
+	return;
+}
+
+void UART4_IRQHandler(void)
+{
+	bsp_uart_s *pst_uart = &gast_uart[BSP_UART4];
+	
+	if (RESET != USART_GetITStatus(UART4, USART_IT_RXNE))
+	{
+//		USART_ClearITPendingBit(USART2,USART_IT_RXNE); //清除中断标志.		
+//		printf("+");
+		pst_uart->st_fifo.auc_buf[pst_uart->st_fifo.us_len ++] = USART_ReceiveData(UART4);
+		pst_uart->st_fifo.us_len = pst_uart->st_fifo.us_len % (BSP_UART_FIFO_LEN - 1);
+	}
+
+	return;
+}
+
+
+void UART5_IRQHandler(void)
+{
+	bsp_uart_s *pst_uart = &gast_uart[BSP_UART5];
+	
+	if (RESET != USART_GetITStatus(UART5, USART_IT_RXNE))
+	{
+//		USART_ClearITPendingBit(USART2,USART_IT_RXNE); //清除中断标志.		
+//		printf("+");
+		pst_uart->st_fifo.auc_buf[pst_uart->st_fifo.us_len ++] = USART_ReceiveData(UART5);
+		pst_uart->st_fifo.us_len = pst_uart->st_fifo.us_len % (BSP_UART_FIFO_LEN - 1);
+	}
+
 	return;
 }
 
