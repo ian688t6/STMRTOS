@@ -235,7 +235,6 @@ int main(void)
 {	
 	rtos_sys_init();
 	rtos_mem_init();
-	bsp_uart_init();
 	rtos_console_init();
 
 	bsp_disp_init();

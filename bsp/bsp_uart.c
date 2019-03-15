@@ -19,6 +19,30 @@ static bsp_uart_s gast_uart[] =
 			.pf_out 		= bsp_uart_out, 
 			.pf_in			= bsp_uart_in, 
 	},
+	
+	{ 
+			.ui_uart_base	= USART3_BASE, 
+			.ui_irq			= USART3_IRQn, 
+			.ui_baudrate 	= 115200,
+			.pf_out 		= bsp_uart_out, 
+			.pf_in			= bsp_uart_in, 
+	},
+	
+	{ 
+			.ui_uart_base	= UART4_BASE, 
+			.ui_irq			= UART4_IRQn, 
+			.ui_baudrate 	= 115200,
+			.pf_out 		= bsp_uart_out, 
+			.pf_in			= bsp_uart_in, 
+	},
+	
+	{ 
+			.ui_uart_base	= UART5_BASE, 
+			.ui_irq			= UART5_IRQn, 
+			.ui_baudrate 	= 115200,
+			.pf_out 		= bsp_uart_out, 
+			.pf_in			= bsp_uart_in, 
+	},	
 };
 
 static void uart_init(bsp_uart_s *pst_uart)
@@ -131,23 +155,23 @@ void USART2_IRQHandler(void)
 //		USART_ClearFlag(USART3,USART_FLAG_ORE);  //读SR 
 //		USART_ReceiveData(USART3); //读DR 
 //		uc_ch = USART_ReceiveData( USART3 );                                                              //由软件序列清除中断标志位(先读USART_SR，然后读USART_DR)
-//    }  
+//  }
 	
 	return;
 }
 
-void bsp_uart_init(void)
-{
-	int32_t i = 0;
-	bsp_uart_s *pst_uart = NULL;
-	
-	for (i = 0; i < (sizeof(gast_uart) / sizeof(bsp_uart_s)); i ++) {
-		pst_uart = &gast_uart[i];
-		uart_init(pst_uart);
-	}
-	
-	return;
-}
+//void bsp_uart_init(void)
+//{
+//	int32_t i = 0;
+//	bsp_uart_s *pst_uart = NULL;
+//	
+//	for (i = 0; i < (sizeof(gast_uart) / sizeof(bsp_uart_s)); i ++) {
+//		pst_uart = &gast_uart[i];
+//		uart_init(pst_uart);
+//	}
+//	
+//	return;
+//}
 
 int32_t bsp_uart_out(void *pv_arg, uint8_t uc_ch)
 {
@@ -174,9 +198,14 @@ int32_t bsp_uart_in(void *pv_arg, uint8_t **ppuc_buf)
 
 bsp_uart_s *bsp_uart_register(uint32_t ui_uart_no)
 {
+	bsp_uart_s *pst_uart = NULL;
+	
 	if (ui_uart_no >= sizeof(gast_uart) / sizeof(bsp_uart_s))
 		return NULL;
 	
-	return &gast_uart[ui_uart_no];
+	pst_uart = &gast_uart[ui_uart_no];
+	uart_init(pst_uart);
+	
+	return pst_uart;
 }
 

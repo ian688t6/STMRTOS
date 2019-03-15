@@ -8,7 +8,9 @@ typedef enum
 {
 	BSP_UART1 = 0,
 	BSP_UART2,
-	BSP_UART3,	
+	BSP_UART3,
+	BSP_UART4,
+	BSP_UART5,
 } uart_num_e;
 
 #define BSP_UART_FIFO_LEN		(256)
@@ -33,7 +35,7 @@ typedef struct
 	uart_fifo	st_fifo;
 } bsp_uart_s;
 
-extern void bsp_uart_init(void);
+//extern void bsp_uart_init(void);
 
 extern bsp_uart_s *bsp_uart_register(uint32_t ui_uart_no);
 
