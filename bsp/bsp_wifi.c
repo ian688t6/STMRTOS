@@ -352,10 +352,10 @@ static void task_wifi_resp(void *pv_param)
 void bsp_wifi_init(void)
 {
 	int32_t i_ret = 0;
-	wifi_ctx_s *pst_ctx = &gst_ctx;
-	uint8_t *puc_resp 	= NULL;
-	board_t *pst_bd 	= board_get();
-	bsp_uart_s *pst_uart	= bsp_uart_register(BSP_UART2);
+	wifi_ctx_s *pst_ctx 	= &gst_ctx;
+	uint8_t *puc_resp 		= NULL;
+	board_t *pst_bd 		= board_get();
+	bsp_uart_s *pst_uart	= bsp_uart_register(BSP_UART5);
 	pst_ctx->pst_mcu 		= pst_bd->pf_wifi_mcu_get();
 	
 	i_ret = pst_ctx->pst_mcu->init(pst_uart);

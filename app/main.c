@@ -32,7 +32,7 @@ static void led_init(void)
 {
 	GPIO_InitTypeDef  GPIO_InitStructure;
 	
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA|RCC_APB2Periph_GPIOD, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;				 
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
@@ -40,9 +40,9 @@ static void led_init(void)
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 	GPIO_SetBits(GPIOA,GPIO_Pin_8);
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
-	GPIO_Init(GPIOD, &GPIO_InitStructure);
-	GPIO_SetBits(GPIOD,GPIO_Pin_2);
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+//	GPIO_Init(GPIOD, &GPIO_InitStructure);
+//	GPIO_SetBits(GPIOD,GPIO_Pin_2);
 	
 	return;
 }
@@ -124,7 +124,7 @@ static void network_task(void *pv_param)
 	}
 	pst_conn->ui_mux = 0;
 	strncpy(pst_conn->ac_type, "TCP", sizeof(pst_conn->ac_type));
-	strncpy(pst_conn->ac_addr, "192.168.1.141", sizeof(pst_conn->ac_addr));
+	strncpy(pst_conn->ac_addr, "192.168.1.105", sizeof(pst_conn->ac_addr));
 	pst_conn->ui_rmt_port = 8099;
 	i_ret = bsp_wifi_ioctl(IOCTL_WIFI_CONNECT, pst_conn, sizeof(wifi_conn_s));
 	if (0 != i_ret)
@@ -198,12 +198,12 @@ static void start_task(void *pvParameters)
 				(UBaseType_t)LED0_TASK_PRIO,
 				(TaskHandle_t *)&LED0Task_Handler);
 
-	xTaskCreate((TaskFunction_t)led1_task,
-				(const char *)"led1_task",
-				(uint16_t)LED1_STK_SIZE,
-				(void *)NULL,
-				(UBaseType_t)LED1_TASK_PRIO,
-				(TaskHandle_t *)&LED1Task_Handler);
+//	xTaskCreate((TaskFunction_t)led1_task,
+//				(const char *)"led1_task",
+//				(uint16_t)LED1_STK_SIZE,
+//				(void *)NULL,
+//				(UBaseType_t)LED1_TASK_PRIO,
+//				(TaskHandle_t *)&LED1Task_Handler);
 #if 1
 	xTaskCreate((TaskFunction_t)gui_task,
 				(const char *)"gui_task",
