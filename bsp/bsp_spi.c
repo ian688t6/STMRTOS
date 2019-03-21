@@ -59,7 +59,6 @@ static uint8_t spi_write_byte(uint32_t ui_spi_base, uint8_t uc_data)
 
 static void spi_init(bsp_spi_s *pst_spi)
 {
-	SPI_InitTypeDef 	st_spi_init;
 	GPIO_InitTypeDef 	st_gpio_init;
 	
 	switch (pst_spi->ui_spi_base) {
@@ -87,18 +86,27 @@ static void spi_init(bsp_spi_s *pst_spi)
 		break;
 	}
 	
-	st_spi_init.SPI_Direction 	= SPI_Direction_2Lines_FullDuplex;  //设置SPI单向或者双向的数据模式:SPI设置为双线双向全双工
-	st_spi_init.SPI_Mode 		= SPI_Mode_Master;				//设置SPI工作模式:设置为主SPI
-	st_spi_init.SPI_DataSize 	= SPI_DataSize_8b;		//设置SPI的数据大小:SPI发送接收8位帧结构
-	st_spi_init.SPI_CPOL 		= SPI_CPOL_High;		//选择了串行时钟的稳态:时钟悬空高
-	st_spi_init.SPI_CPHA 		= SPI_CPHA_2Edge;	//数据捕获于第二个时钟沿
-	st_spi_init.SPI_NSS 		= SPI_NSS_Soft;		//NSS信号由硬件（NSS管脚）还是软件（使用SSI位）管理:内部NSS信号有SSI位控制
-	st_spi_init.SPI_BaudRatePrescaler 	= SPI_BaudRatePrescaler_256;		//定义波特率预分频的值:波特率预分频值为256
-	st_spi_init.SPI_FirstBit 			= SPI_FirstBit_MSB;	//指定数据传输从MSB位还是LSB位开始:数据传输从MSB位开始
-	st_spi_init.SPI_CRCPolynomial 		= 7;	//CRC值计算的多项式
-	SPI_Init((SPI_TypeDef *) pst_spi->ui_spi_base, &st_spi_init);  //根据SPI_InitStruct中指定的参数初始化外设SPIx寄存器
+	pst_spi->st_cfg.SPI_Direction 	= SPI_Direction_2Lines_FullDuplex;  //设置SPI单向或者双向的数据模式:SPI设置为双线双向全双工
+	pst_spi->st_cfg.SPI_Mode 		= SPI_Mode_Master;				//设置SPI工作模式:设置为主SPI
+	pst_spi->st_cfg.SPI_DataSize 	= SPI_DataSize_8b;		//设置SPI的数据大小:SPI发送接收8位帧结构
+	pst_spi->st_cfg.SPI_CPOL 		= SPI_CPOL_High;		//选择了串行时钟的稳态:时钟悬空高
+	pst_spi->st_cfg.SPI_CPHA 		= SPI_CPHA_2Edge;	//数据捕获于第二个时钟沿
+	pst_spi->st_cfg.SPI_NSS 		= SPI_NSS_Soft;		//NSS信号由硬件（NSS管脚）还是软件（使用SSI位）管理:内部NSS信号有SSI位控制
+	pst_spi->st_cfg.SPI_BaudRatePrescaler 	= SPI_BaudRatePrescaler_256;		//定义波特率预分频的值:波特率预分频值为256
+	pst_spi->st_cfg.SPI_FirstBit 			= SPI_FirstBit_MSB;	//指定数据传输从MSB位还是LSB位开始:数据传输从MSB位开始
+	pst_spi->st_cfg.SPI_CRCPolynomial 		= 7;	//CRC值计算的多项式
+	SPI_Init((SPI_TypeDef *) pst_spi->ui_spi_base, &pst_spi->st_cfg);  //根据SPI_InitStruct中指定的参数初始化外设SPIx寄存器
 	SPI_Cmd((SPI_TypeDef *) pst_spi->ui_spi_base, ENABLE); //使能SPI外设
+	spi_read_byte(pst_spi->ui_spi_base);
 	
+	return;
+}
+
+void bsp_spi_bdset(bsp_spi_s *pst_spi, uint8_t uc_bd)
+{
+	pst_spi->st_cfg.SPI_BaudRatePrescaler = uc_bd ;
+  	SPI_Init((SPI_TypeDef *)pst_spi->ui_spi_base, &pst_spi->st_cfg);
+	SPI_Cmd((SPI_TypeDef *)pst_spi->ui_spi_base, ENABLE);
 	return;
 }
 
